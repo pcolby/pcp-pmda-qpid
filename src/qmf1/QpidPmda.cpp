@@ -23,7 +23,16 @@ public:
 
 protected:
 
-    /// @todo  Add broker-related CLI options.
+    virtual boost::program_options::options_description supported_options() const
+    {
+        using namespace boost::program_options;
+        options_description options("Options");
+        options.add_options()
+            ("broker,b", value<std::string>()->default_value("ampq://localhost:5672")
+             PCP_CPP_BOOST_PO_VALUE_NAME("url"), "broker url");
+        options.add(pcp::pmda::supported_options());
+        return options;
+    }
 
     virtual pcp::metrics_description get_supported_metrics()
     {
