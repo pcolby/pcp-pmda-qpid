@@ -1,1 +1,6 @@
 build
+qpid.config
+qpid.creator
+qpid.creator.user
+qpid.files
+qpid.includes
