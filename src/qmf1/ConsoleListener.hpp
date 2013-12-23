@@ -3,9 +3,12 @@
 
 #include <qpid/console/ConsoleListener.h>
 
-class MyConsoleListener : public qpid::console::ConsoleListener {
+class ConsoleListener : public qpid::console::ConsoleListener {
 
 public:
+
+    // Overrides for qpid::console::ConsoleListener events.
+
     virtual void brokerConnected(const qpid::console::Broker &broker);
 
     virtual void brokerDisconnected(const qpid::console::Broker &broker);
