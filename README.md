@@ -2,8 +2,8 @@
 
 Qpid PMDA is a free, open source, [PCP](http://oss.sgi.com/projects/pcp/)
 Performance Metrics Domain Agent for [Apache Qpid](http://qpid.apache.org/). It
-exposes performance metrics from Qpid message brokers to Performance Co-Pilot
-(PCP).
+exposes performance metrics from Qpid message brokers (via QMF) to Performance
+Co-Pilot (PCP).
 
 ## Requirements
 
