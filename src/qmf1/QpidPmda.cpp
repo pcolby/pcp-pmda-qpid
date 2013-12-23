@@ -23,6 +23,8 @@ public:
 
 protected:
 
+    /// @todo  Add broker-related CLI options.
+
     virtual pcp::metrics_description get_supported_metrics()
     {
         /// @todo  Lots and lots of metrics! :)
@@ -34,6 +36,8 @@ protected:
         throw pcp::exception(PM_ERR_NYI);
         return pcp::atom(metric.type,time(NULL));
     }
+
+    /// @todo  Override somewhere to register our console listener.
 
 };
 
