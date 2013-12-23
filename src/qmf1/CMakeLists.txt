@@ -12,4 +12,5 @@ target_link_libraries(
     boost_program_options
     pcp
     pcp_pmda
+    qpidcommon
 )
