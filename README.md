@@ -19,6 +19,17 @@ Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMf2 | Infrastructure
 * [PMDA++](https://github.com/pcolby/pcp-pmda-cpp) 0.1+
 * [Apache Qpid](http://qpid.apache.org/)
 
+
+## Contact
+
+Issues / suggestions can be reported via GitHub's [issue tracker](
+https://github.com/pcolby/pcp-pmda-qpid/issues). Pull requests are very
+welcome.
+
+The [PMDA++ Google Group](http://groups.google.com/group/pcp-pmda-cpp/) is also
+used for general discussion, questions, comments, suggestions, etc for this
+project.  Email pcp-pmda-cpp+subscribe@googlegroups.com to subscribe.
+
 ## License
 
 Available under the [Apache License, Version 2.0](
