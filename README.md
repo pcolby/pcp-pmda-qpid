@@ -7,6 +7,12 @@ brokers via [QMF](http://qpid.apache.org/components/qmf/index.html "Qpid
 Management Framework"), to Performance Co-Pilot (PCP) using the [PMDA++](
 https://github.com/pcolby/pcp-pmda-cpp) library.
 
+```
+      PCP      |   libpcp    |        | pmdaqpid-qmf1 | QMF1 |     Qpid
+  Monitoring   |-------------| PMDA++ |---------------+------|   Messaging
+Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMf2 | Infrastructure
+```
+
 ## Requirements
 
 * [Boost C++ Libraries](http://www.boost.org/) 1.32+
