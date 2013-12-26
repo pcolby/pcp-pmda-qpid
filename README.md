@@ -15,4 +15,5 @@ https://github.com/pcolby/pcp-pmda-cpp) library.
 
 ## License
 
-Something open... probably Apache, but not decided yet.
+Available under the [Apache License, Versio 2.0](
+http://apache.org/licenses/LICENSE-2.0.html).
