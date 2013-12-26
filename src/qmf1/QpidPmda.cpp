@@ -28,8 +28,9 @@ protected:
         using namespace boost::program_options;
         options_description options("Options");
         options.add_options()
-            ("broker,b", value<std::string>()->default_value("ampq://localhost:5672")
-             PCP_CPP_BOOST_PO_VALUE_NAME("url"), "broker url");
+            ("broker,b", value<string_vector>()->
+             default_value(string_vector(1, "ampq://localhost:5672"), "ampq://localhost:5672")
+             PCP_CPP_BOOST_PO_VALUE_NAME("url"), "message broker url(s)");
         options.add(pcp::pmda::supported_options());
         return options;
     }
