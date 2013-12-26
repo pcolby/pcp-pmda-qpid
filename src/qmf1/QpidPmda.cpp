@@ -29,14 +29,14 @@ public:
         return "qpid";
     }
 
-    virtual int default_pmda_domain_number() const
+    virtual int get_default_pmda_domain_number() const
     {
         return 123; /// @todo Pick something appropriate.
     }
 
 protected:
 
-    virtual boost::program_options::options_description supported_options() const
+    virtual boost::program_options::options_description get_supported_options() const
     {
         using namespace boost::program_options;
         options_description connectionOptions("Broker connection options");
@@ -58,10 +58,10 @@ protected:
             ("sasl-min-ssf", value<unsigned>(), "minimum acceptable security strength factor")
             ("sasl-max-ssf", value<unsigned>(), "maximum acceptable security strength factor")
             ("sasl-service", value<std::string>(), "service name, if needed by SASL mechanism");
-        return connectionOptions.add(authenticationOptions).add(pcp::pmda::supported_options());
+        return connectionOptions.add(authenticationOptions).add(pcp::pmda::get_supported_options());
     }
 
-    virtual boost::program_options::options_description supported_hidden_options() const
+    virtual boost::program_options::options_description get_supported_hidden_options() const
     {
         using namespace boost::program_options;
         options_description options;
