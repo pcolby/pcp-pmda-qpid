@@ -61,6 +61,15 @@ protected:
         return connectionOptions.add(authenticationOptions).add(pcp::pmda::supported_options());
     }
 
+    virtual boost::program_options::options_description supported_hidden_options() const
+    {
+        using namespace boost::program_options;
+        options_description options;
+        options.add_options()
+            ("no-pmda", bool_switch(), "");
+        return options;
+    }
+
     virtual pcp::metrics_description get_supported_metrics()
     {
         /// @todo  Lots and lots of metrics! :)
