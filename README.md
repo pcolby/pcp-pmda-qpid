@@ -23,8 +23,8 @@ Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMf2 | Infrastructure
 ## Contact
 
 Issues / suggestions can be reported via GitHub's [issue tracker](
-https://github.com/pcolby/pcp-pmda-qpid/issues). Pull requests are very
-welcome.
+https://github.com/pcolby/pcp-pmda-qpid/issues) (pull requests are very
+welcome).
 
 The [PMDA++ Google Group](http://groups.google.com/group/pcp-pmda-cpp/) is also
 used for general discussion, questions, comments, suggestions, etc for this
