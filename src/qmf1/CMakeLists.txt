@@ -4,9 +4,11 @@ project(QpidPmda)
 
 add_executable(pmdaqpid-qmf1 QpidPmda.cpp ConsoleListener.cpp)
 
+find_package(Boost COMPONENTS program_options REQUIRED)
+
 target_link_libraries(
     pmdaqpid-qmf1
-    boost_program_options
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
     pcp
     pcp_pmda
     qmfconsole
