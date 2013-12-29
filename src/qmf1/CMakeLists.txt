@@ -12,5 +12,6 @@ target_link_libraries(
     pcp
     pcp_pmda
     qmfconsole
+    qpidclient
     qpidcommon
 )

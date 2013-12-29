@@ -18,6 +18,8 @@
 #include <pcp-cpp/pmda.hpp>
 #include <pcp-cpp/units.hpp>
 
+#include <qpid/console/SessionManager.h>
+
 #include "ConsoleListener.hpp"
 
 class QpidPmda : public pcp::pmda {
@@ -59,6 +61,33 @@ protected:
             ("sasl-max-ssf", value<unsigned>(), "maximum acceptable security strength factor")
             ("sasl-service", value<std::string>(), "service name, if needed by SASL mechanism");
         return connectionOptions.add(authenticationOptions).add(pcp::pmda::get_supported_options());
+    }
+
+    virtual void initialize_pmda(pmdaInterface &interface)
+    {
+        // Setup the QMF console listener.
+        qpid::client::ConnectionSettings connectionSettings;
+        /// @todo Apply CLI options.
+        connectionSettings.host = "localhost";
+        connectionSettings.port = 5672;
+
+        ConsoleListener consoleListener; // Add param for debug / log mode?
+        qpid::console::SessionManager sessionManager(&consoleListener);
+        sessionManager.addBroker(connectionSettings);
+
+        // If testing in non-PMDA mode, just wait for input then throw.
+        if (true) { /// @todo This comes from the CLI option.
+            std::cout << "Running in non-PMDA mode; outputting to: "
+                      << interface.version.two.ext->e_logfile << std::endl
+                      << "Press Enter to stop." << std::endl;
+            pmdaOpenLog(&interface);
+            std::getchar();
+            std::cout << "Stopping..." << std::endl;
+            throw pcp::exception(PM_ERR_FAULT);
+        }
+
+        // Let the parent implementation initialize the rest of the PMDA.
+        pcp::pmda::initialize_pmda(interface);
     }
 
     virtual boost::program_options::options_description get_supported_hidden_options() const

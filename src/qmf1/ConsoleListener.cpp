@@ -20,12 +20,13 @@
 #include <pcp/impl.h>
 
 void ConsoleListener::brokerConnected(const qpid::console::Broker &broker) {
-    __pmNotifyErr(LOG_DEBUG, "broker (%s) %s connected",
+    __pmNotifyErr(LOG_DEBUG, "broker %s (%s) connected",
                   broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
 }
 
 void ConsoleListener::brokerDisconnected(const qpid::console::Broker &broker) {
-    //std::cout << "broker: " << broker.getUrl() << " disconnected" << std::endl;
+    __pmNotifyErr(LOG_DEBUG, "broker %s (%s) disconnected",
+                  broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
 }
 
 void ConsoleListener::newPackage(const std::string &package) {
