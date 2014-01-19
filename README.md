@@ -10,7 +10,7 @@ https://github.com/pcolby/pcp-pmda-cpp) library.
 ```
       PCP      |   libpcp    |        | pmdaqpid-qmf1 | QMF1 |     Qpid
   Monitoring   |-------------| PMDA++ |---------------+------|   Messaging
-Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMf2 | Infrastructure
+Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMF2 | Infrastructure
 ```
 
 ## Requirements
