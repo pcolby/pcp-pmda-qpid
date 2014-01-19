@@ -20,6 +20,8 @@
 
 #include <qpid/console/SessionManager.h>
 
+#include <boost/regex.hpp>
+
 #include "ConsoleListener.hpp"
 
 class QpidPmda : public pcp::pmda {
@@ -37,6 +39,7 @@ public:
     }
 
 protected:
+    std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
 
     virtual boost::program_options::options_description get_supported_options() const
     {
@@ -57,10 +60,71 @@ protected:
             ("username", value<std::string>(), "username to authenticate as")
             ("password", value<std::string>(), "password, if needed by SASL mechanism")
             ("sasl-mechanisms", value<std::string>(), "acceptable SASL mechanisms")
-            ("sasl-min-ssf", value<unsigned>(), "minimum acceptable security strength factor")
-            ("sasl-max-ssf", value<unsigned>(), "maximum acceptable security strength factor")
+            ("sasl-min-ssf", value<unsigned int>(), "minimum acceptable security strength factor")
+            ("sasl-max-ssf", value<unsigned int>(), "maximum acceptable security strength factor")
             ("sasl-service", value<std::string>(), "service name, if needed by SASL mechanism");
         return connectionOptions.add(authenticationOptions).add(pcp::pmda::get_supported_options());
+    }
+
+    virtual boost::program_options::options_description get_supported_hidden_options() const
+    {
+        using namespace boost::program_options;
+        options_description options;
+        options.add_options()
+            ("no-pmda", bool_switch(), "run as a non-PMDA for development");
+        return options;
+    }
+
+    virtual bool parse_command_line(const int argc, const char * const argv[],
+                                    pmdaInterface& interface,
+                                    boost::program_options::variables_map &options)
+    {
+        // Let the parent implementation do the actually command line parsing.
+        if (!pcp::pmda::parse_command_line(argc, argv, interface, options)) {
+            return false;
+        }
+
+        // Configure our Qpid connection per the command line options.
+        const string_vector &brokers = options.at("broker").as<string_vector>();
+        for (string_vector::const_iterator iter = brokers.begin(); iter != brokers.end(); ++iter) {
+            //boost::regex broker_url("(amqps?:)?(//)?(.*(:.*)@)?(host)(:(\d+))?(/.*)(\?(.*))"); /// @todo Make a static class member.
+            // scheme://username:password@hostname/virtualhost?param1=value&param2=value#ignored_fragment
+            /*boost::regex broker_url(
+                "(?:([^:/?#]+):)?" // scheme; eg ampq or ampqs
+                "(?://)?"          // '//' officially required, but not by older Qpid implementations.
+                "(?:([^/?#@:]+)(:([^/?#@]+))@)?" // credentials; eg username:password@
+                "([^?#:]*)(:[0-9]+)?"  // hostname:port
+                "(?:\?(?:([^#=&]*)=([^#=&]*))?"
+                "(#(.*))?" // fragment.
+            );
+
+            boost::smatch match;
+            if (!boost::regex_match(*iter, match, broker_url, boost::match_extra)) {
+                throw pcp::exception(PM_ERR_GENERIC, "invalid broker URL: " + *iter);
+            }*/
+
+            /*qpid::client::ConnectionSettings connection;
+            connection.protocol = "ampq";//match[1];
+            connection.host = "localhost";//match[4];
+            connection.port; // uint16_t
+            connection.virtualhost = options.at("virtualhost").as<std::string>();
+            connection.username = options.at("username").as<std::string>();
+            connection.password = options.at("password").as<std::string>();
+            connection.mechanism = options.at("sasl-mechanism").as<std::string>();
+            connection.locale; // std::string
+            connection.heartbeat = options.at("heartbeat").as<uint16_t>();
+            connection.maxChannels = options.at("max-channels").as<uint16_t>();
+            connection.maxFrameSize = options.at("max-frame-size").as<uint16_t>();
+            connection.bounds = options.at("bounds").as<unsigned int>();
+            connection.tcpNoDelay = options.at("tcp-no-delay").as<bool>();
+            connection.service; // std::string
+            connection.minSsf = options.at("sasl-min-ssf").as<unsigned int>();
+            connection.maxSsf = options.at("sasl-min-ssf").as<unsigned int>();
+            connection.sslCertName = options.at("ssl-cert-name").as<std::string>();*/
+        }
+
+        //qpidConnectionSettings;
+        return true;
     }
 
     virtual void initialize_pmda(pmdaInterface &interface)
@@ -88,15 +152,6 @@ protected:
 
         // Let the parent implementation initialize the rest of the PMDA.
         pcp::pmda::initialize_pmda(interface);
-    }
-
-    virtual boost::program_options::options_description get_supported_hidden_options() const
-    {
-        using namespace boost::program_options;
-        options_description options;
-        options.add_options()
-            ("no-pmda", bool_switch(), "");
-        return options;
     }
 
     virtual pcp::metrics_description get_supported_metrics()
