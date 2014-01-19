@@ -19,6 +19,7 @@
 #include <pcp-cpp/units.hpp>
 
 #include <qpid/console/SessionManager.h>
+#include <qpid/Url.h>
 
 #include <boost/regex.hpp>
 
@@ -47,12 +48,12 @@ protected:
         options_description connectionOptions("Broker connection options");
         connectionOptions.add_options()
             ("broker,b", value<string_vector>()->
-             default_value(string_vector(1, "ampq://localhost:5672"), "ampq://localhost:5672")
+             default_value(string_vector(1, "localhost"), "localhost")
              PCP_CPP_BOOST_PO_VALUE_NAME("url"), "message broker url(s)")
             ("heartbeat", value<double>()
              PCP_CPP_BOOST_PO_VALUE_NAME("interval"), "heartbeat interval in seconds")
             ("protocol", value<std::string>(), "version of AMQP to use (e.g. amqp0-10 or amqp1.0)")
-            ("tcp-nodelay", value<bool>()PCP_CPP_BOOST_PO_IMPLICIT_VALUE(true),
+            ("tcp-nodelay", value<bool>()PCP_CPP_BOOST_PO_IMPLICIT_VALUE(false),
              "whether nagle should be enabled")
             ("transport", value<std::string>(), "underlying transport to use (e.g. tcp, ssl, rdma)");
         options_description authenticationOptions("Broker authentication options");
@@ -84,60 +85,61 @@ protected:
             return false;
         }
 
-        // Configure our Qpid connection per the command line options.
+        // Configure our Qpid connection(s) per the command line options.
         const string_vector &brokers = options.at("broker").as<string_vector>();
         for (string_vector::const_iterator iter = brokers.begin(); iter != brokers.end(); ++iter) {
-            //boost::regex broker_url("(amqps?:)?(//)?(.*(:.*)@)?(host)(:(\d+))?(/.*)(\?(.*))"); /// @todo Make a static class member.
-            // scheme://username:password@hostname/virtualhost?param1=value&param2=value#ignored_fragment
-            /*boost::regex broker_url(
-                "(?:([^:/?#]+):)?" // scheme; eg ampq or ampqs
-                "(?://)?"          // '//' officially required, but not by older Qpid implementations.
-                "(?:([^/?#@:]+)(:([^/?#@]+))@)?" // credentials; eg username:password@
-                "([^?#:]*)(:[0-9]+)?"  // hostname:port
-                "(?:\?(?:([^#=&]*)=([^#=&]*))?"
-                "(#(.*))?" // fragment.
-            );
+            qpid::client::ConnectionSettings connection;
+            #define SET_CONNECTION_OPTION(member, key, type) \
+                if (options.count(key)) \
+                    connection.member = options.at(key).as<type>()
+            SET_CONNECTION_OPTION(virtualhost, "virtualhost", std::string);
+            SET_CONNECTION_OPTION(username, "username", std::string);
+            SET_CONNECTION_OPTION(password, "password", std::string);
+            SET_CONNECTION_OPTION(mechanism, "sasl-mechanism", std::string);
+            //SET_CONNECTION_OPTION(locale; // std::string
+            SET_CONNECTION_OPTION(heartbeat, "heartbeat", uint16_t);
+            SET_CONNECTION_OPTION(maxChannels, "max-channels", uint16_t);
+            SET_CONNECTION_OPTION(maxFrameSize, "max-frame-size", uint16_t);
+            SET_CONNECTION_OPTION(bounds, "bounds", unsigned int);
+            SET_CONNECTION_OPTION(tcpNoDelay, "tcp-no-delay", bool);
+            SET_CONNECTION_OPTION(minSsf, "sasl-min-ssf", unsigned int);
+            SET_CONNECTION_OPTION(maxSsf, "sasl-min-ssf", unsigned int);
+            SET_CONNECTION_OPTION(service, "sasl-service", std::string);
+            SET_CONNECTION_OPTION(sslCertName, "ssl-cert-name", std::string);
+            #undef SET_CONNECTION_OPTION
 
-            boost::smatch match;
-            if (!boost::regex_match(*iter, match, broker_url, boost::match_extra)) {
-                throw pcp::exception(PM_ERR_GENERIC, "invalid broker URL: " + *iter);
-            }*/
-
-            /*qpid::client::ConnectionSettings connection;
-            connection.protocol = "ampq";//match[1];
-            connection.host = "localhost";//match[4];
-            connection.port; // uint16_t
-            connection.virtualhost = options.at("virtualhost").as<std::string>();
-            connection.username = options.at("username").as<std::string>();
-            connection.password = options.at("password").as<std::string>();
-            connection.mechanism = options.at("sasl-mechanism").as<std::string>();
-            connection.locale; // std::string
-            connection.heartbeat = options.at("heartbeat").as<uint16_t>();
-            connection.maxChannels = options.at("max-channels").as<uint16_t>();
-            connection.maxFrameSize = options.at("max-frame-size").as<uint16_t>();
-            connection.bounds = options.at("bounds").as<unsigned int>();
-            connection.tcpNoDelay = options.at("tcp-no-delay").as<bool>();
-            connection.service; // std::string
-            connection.minSsf = options.at("sasl-min-ssf").as<unsigned int>();
-            connection.maxSsf = options.at("sasl-min-ssf").as<unsigned int>();
-            connection.sslCertName = options.at("ssl-cert-name").as<std::string>();*/
+            qpid::Url url(*iter);
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__, url.str().c_str());
+            if (!url.getUser().empty()) {
+                connection.username = url.getUser();
+            }
+            if (!url.getPass().empty()) {
+                connection.password = url.getPass();
+            }
+            for (qpid::Url::const_iterator i = url.begin(); i != url.end(); ++i) {
+                __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s:%s:%u", __FILE__, __LINE__, __FUNCTION__,
+                              i->protocol.c_str(), i->host.c_str(), i->port);
+                connection.protocol = i->protocol;
+                connection.host = i->host;
+                connection.port = i->port;
+                qpidConnectionSettings.push_back(connection);
+            }
         }
-
-        //qpidConnectionSettings;
         return true;
     }
 
     virtual void initialize_pmda(pmdaInterface &interface)
     {
         // Setup the QMF console listener.
-        qpid::client::ConnectionSettings connectionSettings;
-        /// @todo Apply CLI options.
-        connectionSettings.host = "localhost";
-        connectionSettings.port = 5672;
-
         ConsoleListener consoleListener; // Add param for debug / log mode?
         qpid::console::SessionManager sessionManager(&consoleListener);
-        sessionManager.addBroker(connectionSettings);
+        for (std::vector<qpid::client::ConnectionSettings>::const_iterator iter = qpidConnectionSettings.begin();
+             iter != qpidConnectionSettings.end(); ++iter)
+        {
+            // Local variable needed because addBroker takes a non-const argument.
+            qpid::client::ConnectionSettings connectionSettings(*iter);
+            sessionManager.addBroker(connectionSettings);
+        }
 
         // If testing in non-PMDA mode, just wait for input then throw.
         if (true) { /// @todo This comes from the CLI option.
