@@ -40,6 +40,7 @@ public:
     }
 
 protected:
+    bool nonPmdaMode;
     std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
 
     virtual boost::program_options::options_description get_supported_options() const
@@ -126,6 +127,8 @@ protected:
                 qpidConnectionSettings.push_back(connection);
             }
         }
+
+        nonPmdaMode = ((options.count("no-pmda") > 0) && (options["no-pmda"].as<bool>()));
         return true;
     }
 
@@ -143,7 +146,7 @@ protected:
         }
 
         // If testing in non-PMDA mode, just wait for input then throw.
-        if (true) { /// @todo This comes from the CLI option.
+        if (nonPmdaMode) {
             std::cout << "Running in non-PMDA mode; outputting to: "
                       << interface.version.two.ext->e_logfile << std::endl
                       << "Press Enter to stop." << std::endl;
