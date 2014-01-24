@@ -52,6 +52,7 @@ protected:
              PCP_CPP_BOOST_PO_VALUE_NAME("url"), "message broker url(s)")
             ("heartbeat", value<double>()
              PCP_CPP_BOOST_PO_VALUE_NAME("interval"), "heartbeat interval in seconds")
+            ("locale", value<double>(), "locale to use for Qpid connections")
             ("protocol", value<std::string>(), "version of AMQP to use (e.g. amqp0-10 or amqp1.0)")
             ("tcp-nodelay", value<bool>()PCP_CPP_BOOST_PO_IMPLICIT_VALUE(false),
              "whether nagle should be enabled")
@@ -96,7 +97,7 @@ protected:
             SET_CONNECTION_OPTION(username, "username", std::string);
             SET_CONNECTION_OPTION(password, "password", std::string);
             SET_CONNECTION_OPTION(mechanism, "sasl-mechanism", std::string);
-            //SET_CONNECTION_OPTION(locale; // std::string
+            SET_CONNECTION_OPTION(locale, "locale", std::string);
             SET_CONNECTION_OPTION(heartbeat, "heartbeat", uint16_t);
             SET_CONNECTION_OPTION(maxChannels, "max-channels", uint16_t);
             SET_CONNECTION_OPTION(maxFrameSize, "max-frame-size", uint16_t);
