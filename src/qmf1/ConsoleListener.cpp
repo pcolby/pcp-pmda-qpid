@@ -18,6 +18,7 @@
 
 #include <qpid/console/Agent.h>
 #include <qpid/console/Object.h>
+#include <qpid/console/Schema.h>
 #include <qpid/console/Value.h>
 
 #include <pcp/pmapi.h>
@@ -81,7 +82,32 @@ void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::
 }
 
 void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::Object &object) {
-    /// @todo  This is where it get's interesting.
+    const bool isQueue = (object.getSchema()->key.getPackageName() == "org.apache.qpid.broker" &&
+                          object.getSchema()->key.getClassName() == "queue");
+
+    if (pmDebug & (isQueue ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
+        std::ostringstream message;
+        message << object.getSchema()->key.getPackageName() << ':' << object.getSchema()->key.getClassName();
+        const qpid::console::Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
+        if (name != object.getAttributes().end()) {
+            message << ' ' << name->second->str();
+        }
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s object: %s", __FILE__, __LINE__, __FUNCTION__,
+                      message.str().c_str());
+
+        for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
+            attribute != object.getAttributes().end(); attribute++) {
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
+                          attribute->first.c_str(), attribute->second->str().c_str());
+        }
+    }
+
+    // Only interested in queue's from here on.
+    if (!isQueue) {
+        return;
+    }
+
+    /// @todo Record stats :)
 }
 
 void ConsoleListener::event(qpid::console::Event &event) {
