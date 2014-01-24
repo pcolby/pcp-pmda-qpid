@@ -16,61 +16,90 @@
 
 #include "ConsoleListener.hpp"
 
+#include <qpid/console/Agent.h>
+#include <qpid/console/Object.h>
+#include <qpid/console/Value.h>
+
 #include <pcp/pmapi.h>
 #include <pcp/impl.h>
 
 void ConsoleListener::brokerConnected(const qpid::console::Broker &broker) {
-    __pmNotifyErr(LOG_DEBUG, "broker %s (%s) connected",
+    __pmNotifyErr(LOG_INFO, "broker %s (%s) connected",
                   broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
 }
 
 void ConsoleListener::brokerDisconnected(const qpid::console::Broker &broker) {
-    __pmNotifyErr(LOG_DEBUG, "broker %s (%s) disconnected",
+    __pmNotifyErr(LOG_INFO, "broker %s (%s) disconnected",
                   broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
 }
 
 void ConsoleListener::newPackage(const std::string &package) {
-    //std::cout << "package: " << package << std::endl;
+    if (pmDebug & DBG_TRACE_APPL2) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      package.c_str());
+    }
 }
 
 void ConsoleListener::newClass(const qpid::console::ClassKey &classKey) {
-    //std::cout << "class: " << classKey.getClassName() << std::endl;
+    if (pmDebug & DBG_TRACE_APPL2) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      classKey.getClassName().c_str());
+    }
 }
 
 void ConsoleListener::newAgent(const qpid::console::Agent &agent) {
-    //std::cout << "newAgent: " << agent.getLabel() << std::endl;
+    if (pmDebug & DBG_TRACE_APPL2) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      agent.getLabel().c_str());
+    }
 }
 
 void ConsoleListener::delAgent (const qpid::console::Agent &agent) {
-    //std::cout << "delAgent: " << agent.getLabel() << std::endl;
+    if (pmDebug & DBG_TRACE_APPL2) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      agent.getLabel().c_str());
+    }
 }
 
 void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::Object &object) {
-    //std::cout << "object: " << object.getObjectId();
-    //const Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
-    //if (name != object.getAttributes().end())
-        //std::cout << ' ' << name->second->str();
-    //std::cout << std::endl;
+    if (pmDebug & DBG_TRACE_APPL2) {
+        std::ostringstream message;
+        message << object.getObjectId();
+        const qpid::console::Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
+        if (name != object.getAttributes().end()) {
+            message << ' ' << name->second->str();
+        }
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s object: %s", __FILE__, __LINE__, __FUNCTION__,
+                      message.str().c_str());
 
-    //for (Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
-        //attribute != object.getAttributes().end(); attribute++) {
-        //std::cout << "  attribute: " << attribute->first << " => "
-          //        << attribute->second->str() << std::endl;
-    //}
+        for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
+            attribute != object.getAttributes().end(); attribute++) {
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
+                          attribute->first.c_str(), attribute->second->str().c_str());
+        }
+    }
 }
 
 void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::Object &object) {
+    /// @todo  This is where it get's interesting.
 }
 
 void ConsoleListener::event(qpid::console::Event &event) {
-    //std::cout << "event: " << event.getClassKey().getClassName() << std::endl;
-    //for (Object::AttributeMap::const_iterator attribute = event.getAttributes().begin();
-        //attribute != event.getAttributes().end(); attribute++) {
-        //std::cout << "  attribute: " << attribute->first << " => "
-          //        << attribute->second->str() << std::endl;
-    //}
+    if (pmDebug & DBG_TRACE_APPL2) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      event.getClassKey().getClassName().c_str());
+        for (qpid::console::Object::AttributeMap::const_iterator attribute = event.getAttributes().begin();
+             attribute != event.getAttributes().end(); attribute++)
+        {
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
+                          attribute->first.c_str(), attribute->second->str().c_str());
+        }
+    }
 }
 
 void ConsoleListener::brokerInfo(qpid::console::Broker &broker) {
-    //std::cout << "brokerInfo: " << broker.getUrl() << std::endl;
+    if (pmDebug & DBG_TRACE_APPL1) {
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      broker.getUrl().c_str());
+    }
 }
