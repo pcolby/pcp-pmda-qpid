@@ -24,6 +24,8 @@
 #include <pcp/pmapi.h>
 #include <pcp/impl.h>
 
+#include <boost/lexical_cast.hpp>
+
 void ConsoleListener::brokerConnected(const qpid::console::Broker &broker) {
     __pmNotifyErr(LOG_INFO, "broker %s (%s) connected",
                   broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
@@ -74,7 +76,7 @@ void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::
                       message.str().c_str());
 
         for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
-            attribute != object.getAttributes().end(); attribute++) {
+            attribute != object.getAttributes().end(); ++attribute) {
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
                           attribute->first.c_str(), attribute->second->str().c_str());
         }
@@ -96,9 +98,22 @@ void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::
                       message.str().c_str());
 
         for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
-            attribute != object.getAttributes().end(); attribute++) {
+            attribute != object.getAttributes().end(); ++attribute) {
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
                           attribute->first.c_str(), attribute->second->str().c_str());
+        }
+
+        for (std::vector<qpid::console::SchemaProperty *>::const_iterator property = object.getSchema()->properties.begin();
+            property != object.getSchema()->properties.end(); ++property) {
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   property: %s:%s", __FILE__, __LINE__, __FUNCTION__,
+                          (*property)->name.c_str(), qmfTypeCodeToString((*property)->typeCode).c_str());
+        }
+
+        for (std::vector<qpid::console::SchemaStatistic *>::const_iterator statistic = object.getSchema()->statistics.begin();
+            statistic != object.getSchema()->statistics.end(); ++statistic) {
+            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   statistic: %s:%s:%s", __FILE__, __LINE__, __FUNCTION__,
+                          (*statistic)->name.c_str(), qmfTypeCodeToString((*statistic)->typeCode).c_str(),
+                          (*statistic)->unit.c_str());
         }
     }
 
@@ -115,7 +130,7 @@ void ConsoleListener::event(qpid::console::Event &event) {
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
                       event.getClassKey().getClassName().c_str());
         for (qpid::console::Object::AttributeMap::const_iterator attribute = event.getAttributes().begin();
-             attribute != event.getAttributes().end(); attribute++)
+             attribute != event.getAttributes().end(); ++attribute)
         {
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   attribute: %s => %s", __FILE__, __LINE__, __FUNCTION__,
                           attribute->first.c_str(), attribute->second->str().c_str());
@@ -127,5 +142,35 @@ void ConsoleListener::brokerInfo(qpid::console::Broker &broker) {
     if (pmDebug & DBG_TRACE_APPL1) {
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
                       broker.getUrl().c_str());
+    }
+}
+
+std::string ConsoleListener::qmfTypeCodeToString(const uint8_t typeCode) {
+    // See Qpid's cpp/include/qmf/engine/Typecode.h
+    switch (typeCode) {
+        case 1: return "UINT8";
+        case 2: return "UINT16";
+        case 3: return "UINT32";
+        case 4: return "UINT64";
+      //case 5: // There is no type 5.
+        case 6: return "SSTR";
+        case 7: return "LSTR";
+        case 8: return "ABSTIME";
+        case 9: return "DELTATIME";
+        case 10: return "REF";
+        case 11: return "BOOL";
+        case 12: return "FLOAT";
+        case 13: return "DOUBLE";
+        case 14: return "UUID";
+        case 15: return "MAP";
+        case 16: return "INT8";
+        case 17: return "INT16";
+        case 18: return "INT32";
+        case 19: return "INT64";
+        case 20: return "OBJECT";
+        case 21: return "LIST";
+        case 22: return "ARRAY";
+        default:
+            return "unknown (" + boost::lexical_cast<std::string>(typeCode) + ')';
     }
 }
