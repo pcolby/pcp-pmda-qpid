@@ -144,7 +144,7 @@ void ConsoleListener::logSchema(const qpid::console::Object &object) {
 // Just for debugging.
 void ConsoleListener::logSchema(const qpid::console::SchemaClass &schema) {
     static std::set<std::string> seenAlready;
-    if (seenAlready.count(schema.getClassKey().str()) == 0) {
+    if ((pmDebug & DBG_TRACE_APPL2) && (seenAlready.count(schema.getClassKey().str()) == 0)) {
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s:%s", __FILE__, __LINE__, __FUNCTION__,
                       schema.getClassKey().getPackageName().c_str(),
                       schema.getClassKey().getClassName().c_str());
