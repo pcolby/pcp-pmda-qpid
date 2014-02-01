@@ -165,7 +165,41 @@ protected:
     virtual pcp::metrics_description get_supported_metrics()
     {
         return pcp::metrics_description()
-        (0, "broker")
+        (0, "broker") // org.apache.qpid.broker::broker::properties
+            (0, "connBacklog", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Connection backlog limit for listening socket" )
+            (1, "dataDir", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Persistent configuration storage location" ) //
+            (2, "maxConns", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Maximum allowed connections" ) //
+            (3, "mgmtPubInterval", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Interval for management broadcasts" ) // second
+            (4, "mgmtPublish", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Broker's management agent sends unsolicited data on the publish interval" ) //
+            (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Index for the broker at this agent" ) //
+            (6, "port", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "TCP Port for AMQP Service" ) //
+            (7, "stagingThreshold", pcp::type<uint32_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Broker stages messages over this size to disk" ) //
+            /*(8, "systemRef", pcp::type<REF>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "System ID" ) //*/
+            (9, "version", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Running software version" ) //
+            (10, "workerThreads", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Thread pool size" )
+        (1, "broker") // org.apache.qpid.broker::broker::statistics
             (0, "abandoned", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
              "Messages left in a deleted queue" )
@@ -268,7 +302,23 @@ protected:
             (33, "uptime", pcp::type<uint64_t>(), PM_SEM_INSTANT,
              pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
              "Total time the broker has been running" )
-        (1, "queue")
+        (2, "queue") // org.apache.qpid.broker::queue::properties
+            //(0, "altExchange", pcp::type<REF>(), PM_SEM_DISCRETE,
+             //pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (1, "arguments", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain,
+             "Arguments supplied in queue.declare")
+            (2, "autoDelete", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (3, "durable", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (4, "exclusive", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
+            //(6, "vhostRef", pcp::type<REF>(), PM_SEM_DISCRETE,
+             //pcp::units(0,0,0, 0,0,0), &queue_domain)
+        (3, "queue") // org.apache.qpid.broker::queue::statistics
             (0, "acquires", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
              "Messages acquired from the queue" )
@@ -400,7 +450,7 @@ protected:
             (43, "unackedMessages", pcp::type<uint32_t>(), PM_SEM_INSTANT,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
              "Messages consumed but not yet acked" )
-        (2 , "system")
+        (4, "system") // org.apache.qpid.broker::system::properties
             (0, "osName", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &system_domain, "Operating system name")
             (1, "nodeName", pcp::type<std::string>(), PM_SEM_DISCRETE,
