@@ -319,135 +319,135 @@ protected:
              pcp::units(0,0,0, 0,0,0), &queue_domain)
         (3, "queue") // org.apache.qpid.broker::queue::statistics
             (0, "acquires", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages acquired from the queue")
             (1, "bindingCountHigh", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             pcp::units(0,0,0, 0,0,0), &queue_domain,
              "Current bindings (High)")
             (2, "bindingCountLow", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             pcp::units(0,0,0, 0,0,0), &queue_domain,
              "Current bindings (Low)")
             (3, "bindingCount", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             pcp::units(0,0,0, 0,0,0), &queue_domain,
              "Current bindings")
             (4, "byteDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Current size of queue in bytes")
             (5, "byteFtdDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Current number of bytes flowed-to-disk")
             (6, "byteFtdDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Total bytes dequeued from the broker having been flowed-to-disk")
             (7, "byteFtdEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Total bytes released from memory and flowed-to-disk on broker")
             (8, "bytePersistDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Persistent messages dequeued")
             (9, "bytePersistEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Persistent messages enqueued")
             (10, "byteTotalDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Total messages dequeued")
             (11, "byteTotalEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Total messages enqueued")
             (12, "byteTxnDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Transactional messages dequeued")
             (13, "byteTxnEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &queue_domain,
              "Transactional messages enqueued")
             (14, "consumerCountHigh", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Current consumers on queue (High)")
             (15, "consumerCountLow", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Current consumers on queue (Low)")
             (16, "consumerCount", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Current consumers on queue")
             (17, "discardsLvq", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to LVQ insert")
             (18, "discardsOverflow", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to reject-policy overflow")
             (19, "discardsPurge", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to management purge")
             (20, "discardsRing", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to ring-queue overflow")
             (21, "discardsSubscriber", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to subscriber reject")
             (22, "discardsTtl", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to TTL expiration")
             (23, "flowStopped", pcp::type<uint8_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,0, 0,0,0), &broker_domain, "Flow control active.")
+             pcp::units(0,0,0, 0,0,0), &queue_domain, "Flow control active.")
             (24, "flowStoppedCount", pcp::type<uint32_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Number of times flow control was activated for this queue")
             (25, "messageLatencyAverage", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
+             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &queue_domain,
              "Broker latency through this queue (Average)")
             (26, "messageLatencyMax", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
+             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &queue_domain,
              "Broker latency through this queue (Max)")
             (27, "messageLatencyMin", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
+             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &queue_domain,
              "Broker latency through this queue (Min)")
             (28, "messageLatencySamples", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
+             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &queue_domain,
              "Broker latency through this queue (Samples)")
             (29, "msgDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Current size of queue in messages")
             (30, "msgFtdDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Current number of messages flowed-to-disk")
             (31, "msgFtdDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Total message bodies dequeued from the broker having been flowed-to-disk")
             (32, "msgFtdEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Total message bodies released from memory and flowed-to-disk on broker")
             (33, "msgPersistDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Persistent messages dequeued")
             (34, "msgPersistEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Persistent messages enqueued")
             (35, "msgTotalDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Total messages dequeued")
             (36, "msgTotalEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Total messages enqueued")
             (37, "msgTxnDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Transactional messages dequeued")
             (38, "msgTxnEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Transactional messages enqueued")
             (39, "releases", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Acquired messages reinserted into the queue")
             (40, "reroutes", pcp::type<uint64_t>(), PM_SEM_COUNTER,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages dequeued to management re-route")
             (41, "unackedMessagesHigh", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages consumed but not yet acked (High)")
             (42, "unackedMessagesLow", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages consumed but not yet acked (Low)")
             (43, "unackedMessages", pcp::type<uint32_t>(), PM_SEM_INSTANT,
-             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages consumed but not yet acked")
         (4, "system") // org.apache.qpid.broker::system::properties
             (0, "osName", pcp::type<std::string>(), PM_SEM_DISCRETE,
