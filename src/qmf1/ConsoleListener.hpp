@@ -43,6 +43,12 @@ public:
     virtual void brokerInfo(qpid::console::Broker &broker);
 
 protected:
+    virtual bool isSupported(const qpid::console::Object &object);
+
+    virtual bool isSupported(const qpid::console::SchemaClass &schemaClass);
+
+    virtual bool isSupported(const qpid::console::ClassKey &classKey);
+
     virtual void logSchema(const qpid::console::Object &object);
 
     virtual void logSchema(const qpid::console::SchemaClass &schema);

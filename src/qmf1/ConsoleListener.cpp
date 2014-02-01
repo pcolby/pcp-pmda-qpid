@@ -65,7 +65,9 @@ void ConsoleListener::delAgent (const qpid::console::Agent &agent) {
 }
 
 void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::Object &object) {
-    if (pmDebug & DBG_TRACE_APPL2) {
+    const bool supported = this->isSupported(object);
+
+    if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
         std::ostringstream message;
         message << object.getClassKey().getPackageName() << ':'
                 << object.getClassKey().getClassName() << ':' << object.getObjectId();
@@ -84,13 +86,19 @@ void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::
                           attribute->first.c_str(), attribute->second->str().c_str());
         }
     }
+
+    // Only interested in things that are supported by this PMDA from here on.
+    if (!supported) {
+        return;
+    }
+
+    /// @todo Record props :)
 }
 
 void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::Object &object) {
-    const bool isQueue = (object.getSchema()->key.getPackageName() == "org.apache.qpid.broker" &&
-                          object.getSchema()->key.getClassName() == "queue");
+    const bool supported = this->isSupported(object);
 
-    if (pmDebug & (isQueue ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
+    if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
         std::ostringstream message;
         message << object.getSchema()->key.getPackageName() << ':' << object.getSchema()->key.getClassName();
         const qpid::console::Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
@@ -109,8 +117,8 @@ void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::
         }
     }
 
-    // Only interested in queue's from here on.
-    if (!isQueue) {
+    // Only interested in things that are supported by this PMDA from here on.
+    if (!supported) {
         return;
     }
 
@@ -137,8 +145,34 @@ void ConsoleListener::brokerInfo(qpid::console::Broker &broker) {
     }
 }
 
+bool ConsoleListener::isSupported(const qpid::console::Object &object) {
+    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
+    return (schemaClass == NULL) ? false : isSupported(*schemaClass);
+}
+
+bool ConsoleListener::isSupported(const qpid::console::SchemaClass &schemaClass) {
+    return isSupported(schemaClass.getClassKey());
+}
+
+bool ConsoleListener::isSupported(const qpid::console::ClassKey &classKey) {
+
+    if (classKey.getPackageName() == "org.apache.qpid.broker") {
+        const std::string &className = classKey.getClassName();
+        if ((className == "broker") ||
+            (className == "queue") ||
+            (className == "system")) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void ConsoleListener::logSchema(const qpid::console::Object &object) {
-    logSchema(*object.getSchema());
+    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
+    if (schemaClass != NULL) {
+        logSchema(*object.getSchema());
+    }
 }
 
 // Just for debugging.
