@@ -43,6 +43,10 @@ public:
     virtual void brokerInfo(qpid::console::Broker &broker);
 
 protected:
+    virtual void logSchema(const qpid::console::Object &object);
+
+    virtual void logSchema(const qpid::console::SchemaClass &schema);
+
     virtual std::string qmfTypeCodeToString(const uint8_t typeCode);
 
 };

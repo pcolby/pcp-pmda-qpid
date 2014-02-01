@@ -43,6 +43,8 @@ protected:
     bool nonPmdaMode;
     std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
 
+    pcp::instance_domain broker_domain, queue_domain, system_domain;
+
     virtual boost::program_options::options_description get_supported_options() const
     {
         using namespace boost::program_options;
@@ -162,8 +164,125 @@ protected:
 
     virtual pcp::metrics_description get_supported_metrics()
     {
-        /// @todo  Lots and lots of metrics! :)
-        return pcp::metrics_description();
+        return pcp::metrics_description()
+        (0, "broker")
+            (0, "abandoned", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages left in a deleted queue" )
+            (1, "abandonedViaAlt", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages routed to alternate exchange from a deleted queue" )
+            (2, "acquires", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages acquired from the queue" )
+            (3, "byteDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Current number of bytes on queues in broker" )
+            (4, "byteFtdDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Current number of bytes flowed-to-disk" )
+            (5, "byteFtdDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total bytes dequeued from the broker having been flowed-to-disk" )
+            (6, "byteFtdEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total bytes released from memory and flowed-to-disk on broker" )
+            (7, "bytePersistDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total persistent bytes dequeued from broker" )
+            (8, "bytePersistEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total persistent bytes enqueued to broker" )
+            (9, "byteTotalDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total bytes dequeued from broker" )
+            (10, "byteTotalEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total bytes enqueued to broker" ) // octet
+            (11, "byteTxnDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total transactional bytes dequeued from broker" )
+            (12, "byteTxnEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Total transactional bytes enqueued to broker" )
+            (13, "discardsLvq", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to LVQ insert" )
+            (14, "discardsNoRoute", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to no-route from exchange" )
+            (15, "discardsOverflow", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to reject-policy overflow" )
+            (16, "discardsPurge", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to management purge" )
+            (17, "discardsRing", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to ring-queue overflow" )
+            (18, "discardsSubscriber", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to subscriber reject" )
+            (19, "discardsTtl", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages discarded due to TTL expiration" )
+            (20, "msgDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Current number of messages on queues in broker" )
+            (21, "msgFtdDepth", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Current number of messages flowed-to-disk" )
+            (22, "msgFtdDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total message bodies dequeued from the broker having been flowed-to-disk" )
+            (23, "msgFtdEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total message bodies released from memory and flowed-to-disk on broker" )
+            (24, "msgPersistDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total persistent messages dequeued from broker" )
+            (25, "msgPersistEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total persistent messages enqueued to broker" )
+            (26, "msgTotalDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total messages dequeued from broker" )
+            (27, "msgTotalEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total messages enqueued to broker" )
+            (28, "msgTxnDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total transactional messages dequeued from broker" )
+            (29, "msgTxnEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Total transactional messages enqueued to broker" )
+            (30, "queueCount", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(0,0,0, 0,0,0), &broker_domain,
+             "Number of queues in the broker" )
+            (31, "releases", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Acquired messages reinserted into the queue" )
+            (32, "reroutes", pcp::type<uint64_t>(), PM_SEM_COUNTER,
+             pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
+             "Messages dequeued to management re-route" )
+            (33, "uptime", pcp::type<uint64_t>(), PM_SEM_INSTANT,
+             pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
+             "Total time the broker has been running" )
+        (1, "queue")
+            /// @todo
+        (2 , "system")
+            (0, "osName", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain, "Operating system name")
+            (1, "nodeName", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain, "Node name")
+            (2, "machine", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain)
+            (3, "release", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain, "System release")
+            (4, "version", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain, "System version")
+            (5, "systemId", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &system_domain, "System UUID");
     }
 
     virtual fetch_value_result fetch_value(const metric_id &metric)
@@ -171,8 +290,6 @@ protected:
         throw pcp::exception(PM_ERR_NYI);
         return pcp::atom(metric.type,time(NULL));
     }
-
-    /// @todo  Override somewhere to register our console listener.
 
 };
 
