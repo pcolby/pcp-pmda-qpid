@@ -171,34 +171,33 @@ protected:
              "Connection backlog limit for listening socket" )
             (1, "dataDir", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Persistent configuration storage location" ) //
+             "Persistent configuration storage location" )
             (2, "maxConns", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Maximum allowed connections" ) //
+             "Maximum allowed connections" )
             (3, "mgmtPubInterval", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Interval for management broadcasts" ) // second
+             pcp::units(0,1,0, 0,PM_TIME_SEC,0), &broker_domain,
+             "Interval for management broadcasts" )
             (4, "mgmtPublish", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Broker's management agent sends unsolicited data on the publish interval" ) //
+             "Broker's management agent sends unsolicited data on the publish interval" )
             (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Index for the broker at this agent" ) //
+             "Index for the broker at this agent" )
             (6, "port", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "TCP Port for AMQP Service" ) //
+             "TCP Port for AMQP Service" )
             (7, "stagingThreshold", pcp::type<uint32_t>(), PM_SEM_DISCRETE,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Broker stages messages over this size to disk" ) //
-            /*(8, "systemRef", pcp::type<REF>(), PM_SEM_DISCRETE,
-             pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "System ID" ) //*/
+             pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
+             "Broker stages messages over this size to disk" )
+            (8, "systemRef", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &broker_domain, "System ID")
             (9, "version", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Running software version" ) //
+             "Running software version" )
             (10, "workerThreads", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
-             "Thread pool size" )
+             "Thread pool size")
         (1, "broker") // org.apache.qpid.broker::broker::statistics
             (0, "abandoned", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
@@ -232,7 +231,7 @@ protected:
              "Total bytes dequeued from broker" )
             (10, "byteTotalEnqueues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
-             "Total bytes enqueued to broker" ) // octet
+             "Total bytes enqueued to broker" )
             (11, "byteTxnDequeues", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(1,0,0, PM_SPACE_BYTE,0,0), &broker_domain,
              "Total transactional bytes dequeued from broker" )
@@ -303,8 +302,8 @@ protected:
              pcp::units(0,1,0, 0,PM_TIME_NSEC,0), &broker_domain,
              "Total time the broker has been running" )
         (2, "queue") // org.apache.qpid.broker::queue::properties
-            //(0, "altExchange", pcp::type<REF>(), PM_SEM_DISCRETE,
-             //pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (0, "altExchange", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
             (1, "arguments", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain,
              "Arguments supplied in queue.declare")
@@ -316,8 +315,8 @@ protected:
              pcp::units(0,0,0, 0,0,0), &queue_domain)
             (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain)
-            //(6, "vhostRef", pcp::type<REF>(), PM_SEM_DISCRETE,
-             //pcp::units(0,0,0, 0,0,0), &queue_domain)
+            (6, "vhostRef", pcp::type<std::string>(), PM_SEM_DISCRETE,
+             pcp::units(0,0,0, 0,0,0), &queue_domain)
         (3, "queue") // org.apache.qpid.broker::queue::statistics
             (0, "acquires", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &broker_domain,
