@@ -31,7 +31,39 @@ if (PCP_PMCONFIG_EXECUTABLE)
 endif (PCP_PMCONFIG_EXECUTABLE)
 
 if (PCP_PMDA_DIR)
+    # Install the PMDA binary.
     install(
         TARGETS pmda${PROJECT_NAME} DESTINATION ${PCP_PMDA_DIR}/${PROJECT_NAME}
+    )
+    # Export the PMDA's support files (domain, help, pmns, etc).
+    install(
+        CODE "execute_process(
+            COMMAND ${PCP_PMDA_DIR}/${PROJECT_NAME}/pmda${PROJECT_NAME} --export-all
+            WORKING_DIRECTORY ${PCP_PMDA_DIR}/${PROJECT_NAME}
+        )"
+    )
+    # Install a basic PMDA registration script.
+    install(
+        CODE "file(WRITE ${PCP_PMDA_DIR}/${PROJECT_NAME}/Install
+            \"# Install the ${PROJECT_NAME} PMDA \n\n\"
+            \". $PCP_DIR/etc/pcp.env\n\"
+            \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
+            \"iam=${PROJECT_NAME}\n\"
+            \"pmns_name=qpid\n\n\"
+            \"pmdaSetup\n\"
+            \"pmdaInstall\n\"
+            \"exit 0\n\")"
+    )
+    # Install a basic PMDA deregistration script.
+    install(
+        CODE "file(WRITE ${PCP_PMDA_DIR}/${PROJECT_NAME}/RemoveNew
+            \"# Remove the ${PROJECT_NAME} PMDA \n\n\"
+            \". $PCP_DIR/etc/pcp.env\n\"
+            \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
+            \"iam=${PROJECT_NAME}\n\"
+            \"pmns_name=qpid\n\n\"
+            \"pmdaSetup\n\"
+            \"pmdaRemove\n\"
+            \"exit 0\n\")"
     )
 endif (PCP_PMDA_DIR)
