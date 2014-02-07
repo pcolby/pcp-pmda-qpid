@@ -1,4 +1,4 @@
-# Qpid PMDA
+# Qpid PMDA [![Build Status](https://travis-ci.org/pcolby/pcp-pmda-cpp.png?branch=master)](https://travis-ci.org/pcolby/pcp-pmda-qpid)
 
 Qpid PMDA is a free, open source, [PCP](http://oss.sgi.com/projects/pcp/
 "Performance Co-Pilot") Performance Metrics Domain Agent for [Apache Qpid](
