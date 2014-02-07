@@ -39,6 +39,11 @@ public:
         return 123; /// @todo Pick something appropriate.
     }
 
+    virtual std::string get_pmda_version() const
+    {
+        return "0.0.0";
+    }
+
 protected:
     bool nonPmdaMode;
     std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
