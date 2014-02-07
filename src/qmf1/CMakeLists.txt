@@ -56,7 +56,7 @@ if (PCP_PMDAS_DIR)
     )
     # Install a basic PMDA deregistration script.
     install(
-        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/RemoveNew
+        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/Remove
             \"# Remove the ${PROJECT_NAME} PMDA \n\n\"
             \". $PCP_DIR/etc/pcp.env\n\"
             \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
