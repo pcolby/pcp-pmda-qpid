@@ -67,3 +67,18 @@ if (PCP_PMDAS_DIR)
             \"exit 0\n\")"
     )
 endif (PCP_PMDAS_DIR)
+
+# Enable (and stop on) compiler warnings.
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-Wall   HAVE_WALL)
+check_cxx_compiler_flag(-Werror HAVE_WERROR)
+check_cxx_compiler_flag(-Wextra HAVE_WEXTRA)
+if (HAVE_WALL)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+endif()
+if (HAVE_WERROR)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+endif()
+if (HAVE_WEXTRA)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
+endif()

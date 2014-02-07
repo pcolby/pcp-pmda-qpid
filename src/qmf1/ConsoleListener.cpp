@@ -64,7 +64,7 @@ void ConsoleListener::delAgent (const qpid::console::Agent &agent) {
     }
 }
 
-void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::Object &object) {
+void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/, qpid::console::Object &object) {
     const bool supported = this->isSupported(object);
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
@@ -95,7 +95,7 @@ void ConsoleListener::objectProps(qpid::console::Broker &broker, qpid::console::
     /// @todo Record props :)
 }
 
-void ConsoleListener::objectStats(qpid::console::Broker &broker, qpid::console::Object &object) {
+void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/, qpid::console::Object &object) {
     const bool supported = this->isSupported(object);
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
