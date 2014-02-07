@@ -12,7 +12,7 @@ install:
     sudo apt-get install -qq
     libboost-program-options-dev
     libpcp3 libpcp3-dev libpcp-pmda3 libpcp-pmda3-dev
-    libqmfconsole2-dev libqpidcommon2-dev
+    libqmfconsole2-dev libqpidclient2-dev libqpidcommon2-dev
   - wget -P /tmp https://github.com/pcolby/pcp-pmda-cpp/archive/master.zip
   - unzip -d /tmp /tmp/master.zip
   - pushd /tmp/pcp-pmda-cpp-master/include
