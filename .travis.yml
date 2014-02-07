@@ -15,7 +15,7 @@ install:
     libqmfconsole2-dev
   - wget -P /tmp https://github.com/pcolby/pcp-pmda-cpp/archive/master.zip
   - unzip -d /tmp /tmp/master.zip
-  - pushd /tmp/pcp-pmda-cpp-master/
+  - pushd /tmp/pcp-pmda-cpp-master/include
   - cmake . && sudo make install
 
 before_script:
