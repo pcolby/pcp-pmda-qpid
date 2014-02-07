@@ -23,28 +23,28 @@ if (PCP_PMCONFIG_EXECUTABLE)
         COMMAND ${PCP_PMCONFIG_EXECUTABLE}
         OUTPUT_VARIABLE PCP_PMCONFIG_OUTPUT
     )
-    string(REGEX MATCH "PCP_PMDAS_DIR=[^\n]*" PCP_PMDA_DIR ${PCP_PMCONFIG_OUTPUT})
-    if (PCP_PMDA_DIR)
-        string(SUBSTRING ${PCP_PMDA_DIR} 14 -1 PCP_PMDA_DIR)
-        message(STATUS "Found PMDAs directory: ${PCP_PMDA_DIR}")
-    endif (PCP_PMDA_DIR)
+    string(REGEX MATCH "PCP_PMDAS_DIR=[^\n]*" PCP_PMDAS_DIR ${PCP_PMCONFIG_OUTPUT})
+    if (PCP_PMDAS_DIR)
+        string(SUBSTRING ${PCP_PMDAS_DIR} 14 -1 PCP_PMDAS_DIR)
+        message(STATUS "Found PMDAs directory: ${PCP_PMDAS_DIR}")
+    endif (PCP_PMDAS_DIR)
 endif (PCP_PMCONFIG_EXECUTABLE)
 
-if (PCP_PMDA_DIR)
+if (PCP_PMDAS_DIR)
     # Install the PMDA binary.
     install(
-        TARGETS pmda${PROJECT_NAME} DESTINATION ${PCP_PMDA_DIR}/${PROJECT_NAME}
+        TARGETS pmda${PROJECT_NAME} DESTINATION ${PCP_PMDAS_DIR}/${PROJECT_NAME}
     )
     # Export the PMDA's support files (domain, help, pmns, etc).
     install(
         CODE "execute_process(
-            COMMAND ${PCP_PMDA_DIR}/${PROJECT_NAME}/pmda${PROJECT_NAME} --export-all
-            WORKING_DIRECTORY ${PCP_PMDA_DIR}/${PROJECT_NAME}
+            COMMAND ${PCP_PMDAS_DIR}/${PROJECT_NAME}/pmda${PROJECT_NAME} --export-all
+            WORKING_DIRECTORY ${PCP_PMDAS_DIR}/${PROJECT_NAME}
         )"
     )
     # Install a basic PMDA registration script.
     install(
-        CODE "file(WRITE ${PCP_PMDA_DIR}/${PROJECT_NAME}/Install
+        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/Install
             \"# Install the ${PROJECT_NAME} PMDA \n\n\"
             \". $PCP_DIR/etc/pcp.env\n\"
             \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
@@ -56,7 +56,7 @@ if (PCP_PMDA_DIR)
     )
     # Install a basic PMDA deregistration script.
     install(
-        CODE "file(WRITE ${PCP_PMDA_DIR}/${PROJECT_NAME}/RemoveNew
+        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/RemoveNew
             \"# Remove the ${PROJECT_NAME} PMDA \n\n\"
             \". $PCP_DIR/etc/pcp.env\n\"
             \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
@@ -66,4 +66,4 @@ if (PCP_PMDA_DIR)
             \"pmdaRemove\n\"
             \"exit 0\n\")"
     )
-endif (PCP_PMDA_DIR)
+endif (PCP_PMDAS_DIR)
