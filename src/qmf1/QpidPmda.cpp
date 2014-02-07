@@ -21,8 +21,6 @@
 #include <qpid/console/SessionManager.h>
 #include <qpid/Url.h>
 
-#include <boost/regex.hpp>
-
 #include "ConsoleListener.hpp"
 
 class QpidPmda : public pcp::pmda {

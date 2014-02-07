@@ -4,7 +4,7 @@ project(qpid-qmf1)
 
 add_executable(pmda${PROJECT_NAME} QpidPmda.cpp ConsoleListener.cpp)
 
-find_package(Boost COMPONENTS program_options regex REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
 
 target_link_libraries(
     pmda${PROJECT_NAME}
