@@ -17,6 +17,7 @@ install:
   - unzip -d /tmp /tmp/master.zip
   - pushd /tmp/pcp-pmda-cpp-master/include
   - cmake . && sudo make install
+  - popd
 
 before_script:
   - mkdir -p build
