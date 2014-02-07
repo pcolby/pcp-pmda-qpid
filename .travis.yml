@@ -13,6 +13,10 @@ install:
     libboost-program-options-dev
     libpcp3 libpcp3-dev libpcp-pmda3 libpcp-pmda3-dev
     libqmfconsole2-dev
+  - wget -P /tmp https://github.com/pcolby/pcp-pmda-cpp/archive/master.zip
+  - unzip -d /tmp /tmp/master.zip
+  - pushd /tmp/pcp-pmda-cpp-master/
+  - cmake . && sudo make install
 
 before_script:
   - mkdir -p build
