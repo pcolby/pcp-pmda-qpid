@@ -148,6 +148,7 @@ protected:
     virtual void initialize_pmda(pmdaInterface &interface)
     {
         // Setup the QMF console listener.
+        /// @todo  Make these objects class members.
         ConsoleListener consoleListener; // Add param for debug / log mode?
         qpid::console::SessionManager sessionManager(&consoleListener);
         for (std::vector<qpid::client::ConnectionSettings>::const_iterator iter = qpidConnectionSettings.begin();
@@ -479,8 +480,23 @@ protected:
              pcp::units(0,0,0, 0,0,0), &system_domain, "System UUID");
     }
 
+    virtual void begin_fetch_values()
+    {
+        /// @todo  Check if our ConsoleListener has any new objects, and if so
+        ///        register them via pmdaCacheStoreKey
+        //pmdaCacheStoreKey(domain, PMDA_CACHE_ADD, name, objectid, objectidlen, key);
+    }
+
     virtual fetch_value_result fetch_value(const metric_id &metric)
     {
+        /// @todo  Fetch the instance's name and object ID via:
+        //pmdaCacheLookup(indom, metric.instance, name, objectId);
+
+        /// @todo  Fetch the object's stats from our ConsoleListener. eg:
+        //consoleListener->getQueue(objectId).
+
+        /// @todo  Fetch the metric from object's stats.
+
         throw pcp::exception(PM_ERR_NYI);
         return pcp::atom(metric.type,time(NULL));
     }
