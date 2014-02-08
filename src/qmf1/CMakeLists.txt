@@ -16,6 +16,30 @@ target_link_libraries(
     qpidcommon
 )
 
+# Generate a basic PMDA registration script.
+file(WRITE Install
+    "# Install the ${PROJECT_NAME} PMDA\n\n"
+    ". $PCP_DIR/etc/pcp.env\n"
+    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
+    "iam=${PROJECT_NAME}\n"
+    "pmns_name=qpid\n\n"
+    "pmdaSetup\n"
+    "pmdaInstall\n"
+    "exit 0\n"
+)
+
+# Generate a basic PMDA deregistration script.
+file(WRITE Remove
+    "# Remove the ${PROJECT_NAME} PMDA\n\n"
+    ". $PCP_DIR/etc/pcp.env\n"
+    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
+    "iam=${PROJECT_NAME}\n"
+    "pmns_name=qpid\n\n"
+    "pmdaSetup\n"
+    "pmdaRemove\n"
+    "exit 0\n"
+)
+
 find_program(PCP_PMCONFIG_EXECUTABLE NAMES pmconfig)
 if (PCP_PMCONFIG_EXECUTABLE)
     message(STATUS "Found pmconfig: ${PCP_PMCONFIG_EXECUTABLE}")
@@ -42,29 +66,13 @@ if (PCP_PMDAS_DIR)
             WORKING_DIRECTORY ${PCP_PMDAS_DIR}/${PROJECT_NAME}
         )"
     )
-    # Install a basic PMDA registration script.
+    # Install the PMDA registration scripts.
     install(
-        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/Install
-            \"# Install the ${PROJECT_NAME} PMDA \n\n\"
-            \". $PCP_DIR/etc/pcp.env\n\"
-            \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
-            \"iam=${PROJECT_NAME}\n\"
-            \"pmns_name=qpid\n\n\"
-            \"pmdaSetup\n\"
-            \"pmdaInstall\n\"
-            \"exit 0\n\")"
-    )
-    # Install a basic PMDA deregistration script.
-    install(
-        CODE "file(WRITE ${PCP_PMDAS_DIR}/${PROJECT_NAME}/Remove
-            \"# Remove the ${PROJECT_NAME} PMDA \n\n\"
-            \". $PCP_DIR/etc/pcp.env\n\"
-            \". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n\"
-            \"iam=${PROJECT_NAME}\n\"
-            \"pmns_name=qpid\n\n\"
-            \"pmdaSetup\n\"
-            \"pmdaRemove\n\"
-            \"exit 0\n\")"
+        FILES Install Remove DESTINATION ${PCP_PMDAS_DIR}/${PROJECT_NAME}
+        PERMISSIONS
+            OWNER_READ OWNER_WRITE OWNER_EXECUTE
+            GROUP_READ GROUP_EXECUTE
+            WORLD_READ WORLD_EXECUTE
     )
 endif (PCP_PMDAS_DIR)
 
