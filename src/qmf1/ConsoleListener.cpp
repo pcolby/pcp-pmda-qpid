@@ -26,6 +26,64 @@
 
 #include <boost/lexical_cast.hpp>
 
+boost::optional<qpid::console::ObjectId> ConsoleListener::getNewObjectId() {
+    boost::optional<qpid::console::ObjectId> id;
+    boost::unique_lock<boost::mutex> lock(newObjectsMutex);
+    if (!newObjects.empty()) {
+        id = newObjects.front();
+        newObjects.pop();
+    }
+    return id;
+}
+
+boost::optional<qpid::console::Object> ConsoleListener::getProps(const qpid::console::ObjectId &id) {
+    boost::optional<qpid::console::Object> object;
+    boost::unique_lock<boost::mutex> lock(propsMutex);
+    const ObjectMap::const_iterator iter = props.find(id);
+    if (iter != props.end()) {
+        object = iter->second;
+    }
+    return object;
+}
+
+boost::optional<qpid::console::Object> ConsoleListener::getStats(const qpid::console::ObjectId &id) {
+    boost::optional<qpid::console::Object> object;
+    boost::unique_lock<boost::mutex> lock(statsMutex);
+    const ObjectMap::const_iterator iter = stats.find(id);
+    if (iter != stats.end()) {
+        object = iter->second;
+    }
+    return object;
+}
+
+ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::Object &object) {
+    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
+    if (schemaClass != NULL) {
+        return getType(*object.getSchema());
+    }
+    return Other;
+}
+
+ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::SchemaClass &schemaClass) {
+    return getType(schemaClass.getClassKey());
+}
+
+ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::ClassKey &classKey) {
+    if (classKey.getPackageName() == "org.apache.qpid.broker") {
+        const std::string &className = classKey.getClassName();
+        if (className == "broker") return Broker;
+        if (className == "queue")  return Queue;
+        if (className == "system") return System;
+    }
+    return Other;
+}
+
+std::string ConsoleListener::toString(const qpid::console::ObjectId &id) {
+    std::ostringstream stream;
+    stream << id;
+    return stream.str();
+}
+
 void ConsoleListener::brokerConnected(const qpid::console::Broker &broker) {
     __pmNotifyErr(LOG_INFO, "broker %s (%s) connected",
                   broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
@@ -87,12 +145,23 @@ void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/, qpid::conso
         }
     }
 
-    // Only interested in things that are supported by this PMDA from here on.
-    if (!supported) {
-        return;
+    if (supported) {
+        boost::unique_lock<boost::mutex> lock(propsMutex);
+        const ObjectMap::iterator iter = props.find(object.getObjectId());
+        if (iter == props.end()) {
+            props.insert(std::make_pair(object.getObjectId(), object));
+            boost::unique_lock<boost::mutex> lock(statsMutex);
+            if (stats.find(object.getObjectId()) == stats.end()) {
+                std::ostringstream stream;
+                stream << object.getObjectId();
+                __pmNotifyErr(LOG_INFO, "new props: %s", stream.str().c_str());
+                boost::unique_lock<boost::mutex> lock(newObjectsMutex);
+                newObjects.push(object.getObjectId());
+            }
+        } else {
+            iter->second = object;
+        }
     }
-
-    /// @todo Record props :)
 }
 
 void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/, qpid::console::Object &object) {
@@ -117,12 +186,23 @@ void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/, qpid::conso
         }
     }
 
-    // Only interested in things that are supported by this PMDA from here on.
-    if (!supported) {
-        return;
+    if (supported) {
+        boost::unique_lock<boost::mutex> lock(statsMutex);
+        const ObjectMap::iterator iter = stats.find(object.getObjectId());
+        if (iter == stats.end()) {
+            stats.insert(std::make_pair(object.getObjectId(), object));
+            boost::unique_lock<boost::mutex> lock(propsMutex);
+            if (props.find(object.getObjectId()) == props.end()) {
+                std::ostringstream stream;
+                stream << object.getObjectId();
+                __pmNotifyErr(LOG_INFO, "new stats: %s", stream.str().c_str());
+                boost::unique_lock<boost::mutex> lock(newObjectsMutex);
+                newObjects.push(object.getObjectId());
+            }
+        } else {
+            iter->second = object;
+        }
     }
-
-    /// @todo Record stats :)
 }
 
 void ConsoleListener::event(qpid::console::Event &event) {
@@ -155,17 +235,7 @@ bool ConsoleListener::isSupported(const qpid::console::SchemaClass &schemaClass)
 }
 
 bool ConsoleListener::isSupported(const qpid::console::ClassKey &classKey) {
-
-    if (classKey.getPackageName() == "org.apache.qpid.broker") {
-        const std::string &className = classKey.getClassName();
-        if ((className == "broker") ||
-            (className == "queue") ||
-            (className == "system")) {
-            return true;
-        }
-    }
-
-    return false;
+    return (getType(classKey) != Other);
 }
 
 void ConsoleListener::logSchema(const qpid::console::Object &object) {

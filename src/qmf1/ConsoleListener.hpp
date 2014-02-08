@@ -16,9 +16,35 @@
 
 #include <qpid/console/ConsoleListener.h>
 
+#include <boost/optional/optional.hpp>
+#include <boost/thread/mutex.hpp>
+
+#include <queue>
+
 class ConsoleListener : public qpid::console::ConsoleListener {
 
 public:
+    enum ObjectSchemaType {
+        Broker,
+        Queue,
+        System,
+        Other
+    };
+
+    boost::optional<qpid::console::ObjectId> getNewObjectId();
+
+    boost::optional<qpid::console::Object> getProps(const qpid::console::ObjectId &id);
+
+    boost::optional<qpid::console::Object> getStats(const qpid::console::ObjectId &id);
+
+    static ObjectSchemaType getType(const qpid::console::Object &object);
+
+    static ObjectSchemaType getType(const qpid::console::SchemaClass &schemaClass);
+
+    static ObjectSchemaType getType(const qpid::console::ClassKey &classKey);
+
+    static std::string toString(const qpid::console::ObjectId &id);
+
 
     // Overrides for qpid::console::ConsoleListener events.
 
@@ -54,5 +80,14 @@ protected:
     virtual void logSchema(const qpid::console::SchemaClass &schema);
 
     virtual std::string qmfTypeCodeToString(const uint8_t typeCode);
+
+private:
+    typedef std::map<qpid::console::ObjectId, qpid::console::Object> ObjectMap;
+
+    ObjectMap props, stats;
+    boost::mutex propsMutex, statsMutex;
+
+    std::queue<qpid::console::ObjectId> newObjects;
+    boost::mutex newObjectsMutex;
 
 };

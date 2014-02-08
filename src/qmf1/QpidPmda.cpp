@@ -26,7 +26,7 @@
 class QpidPmda : public pcp::pmda {
 
 public:
-    QpidPmda()
+    QpidPmda() : sessionManager(&consoleListener)
     {
         // Setup our instance domain IDs.  Thses instance domains are empty to
         // begin with - we'll dynamically add to them as Qpid updates arrive.
@@ -55,6 +55,9 @@ protected:
     std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
 
     pcp::instance_domain broker_domain, queue_domain, system_domain;
+
+    ConsoleListener consoleListener;
+    qpid::console::SessionManager sessionManager;
 
     virtual boost::program_options::options_description get_supported_options() const
     {
@@ -148,9 +151,6 @@ protected:
     virtual void initialize_pmda(pmdaInterface &interface)
     {
         // Setup the QMF console listener.
-        /// @todo  Make these objects class members.
-        ConsoleListener consoleListener; // Add param for debug / log mode?
-        qpid::console::SessionManager sessionManager(&consoleListener);
         for (std::vector<qpid::client::ConnectionSettings>::const_iterator iter = qpidConnectionSettings.begin();
              iter != qpidConnectionSettings.end(); ++iter)
         {
@@ -482,13 +482,57 @@ protected:
 
     virtual void begin_fetch_values()
     {
-        /// @todo  Check if our ConsoleListener has any new objects, and if so
-        ///        register them via pmdaCacheStoreKey
-        //pmdaCacheStoreKey(domain, PMDA_CACHE_ADD, name, objectid, objectidlen, key);
+        boost::optional<qpid::console::ObjectId> objectId;
+        while (objectId = consoleListener.getNewObjectId()) {
+            const boost::optional<qpid::console::Object> props = consoleListener.getProps(*objectId);
+            if (!props) {
+                __pmNotifyErr(LOG_NOTICE, "No properties found for object %s",
+                              ConsoleListener::toString(*objectId).c_str());
+            } else {
+                const ConsoleListener::ObjectSchemaType type = ConsoleListener::getType(*props);
+                pcp::instance_domain * domain = NULL;
+                switch (type) {
+                    case ConsoleListener::Broker:
+                        domain = &broker_domain;
+                        break;
+                    case ConsoleListener::Queue:
+                        domain = &queue_domain;
+                        break;
+                    case ConsoleListener::System:
+                        domain = &system_domain;
+                        break;
+                    default:
+                        __pmNotifyErr(LOG_ERR, "Object %s has unsupported type %d",
+                                      ConsoleListener::toString(*objectId).c_str(),
+                                      type);
+                        __pmNotifyErr(LOG_ERR, "%s",
+                                      props->getAttributes().find("name")->second->asString().c_str());
+                        return;
+                }
+                const qpid::console::Object::AttributeMap::const_iterator
+                    name = props->getAttributes().find("name");
+                if (name == props->getAttributes().end()) {
+                    __pmNotifyErr(LOG_WARNING, "Object %s has no name attribute",
+                                  ConsoleListener::toString(*objectId).c_str());
+                    return;
+                }
+                const int instanceId = pmdaCacheStoreKey(
+                    *domain, PMDA_CACHE_ADD, name->second->asString().c_str(),
+                    0, NULL, new qpid::console::ObjectId(*objectId));
+                if (instanceId < 0) {
+                    __pmNotifyErr(LOG_ERR, "pmdaCacheStore failed for object %s: %s",
+                                  ConsoleListener::toString(*objectId).c_str(),
+                                  pmErrStr(instanceId));
+                }
+                (*domain)(instanceId, name->second->asString());
+            }
+        }
     }
 
     virtual fetch_value_result fetch_value(const metric_id &metric)
     {
+        return pcp::atom(metric.type,123);
+
         /// @todo  Fetch the instance's name and object ID via:
         //pmdaCacheLookup(indom, metric.instance, name, objectId);
 
