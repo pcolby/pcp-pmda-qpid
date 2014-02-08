@@ -26,6 +26,14 @@
 class QpidPmda : public pcp::pmda {
 
 public:
+    QpidPmda()
+    {
+        // Setup our instance domain IDs.  Thses instance domains are empty to
+        // begin with - we'll dynamically add to them as Qpid updates arrive.
+        broker_domain(0);
+        queue_domain(1);
+        system_domain(2);
+    }
 
     virtual std::string get_pmda_name() const
     {
