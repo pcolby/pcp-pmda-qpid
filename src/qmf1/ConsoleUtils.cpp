@@ -47,6 +47,37 @@ ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassK
     return Other;
 }
 
+std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
+{
+    // See Qpid's cpp/include/qmf/engine/Typecode.h
+    switch (typeCode) {
+        case 1: return "UINT8";
+        case 2: return "UINT16";
+        case 3: return "UINT32";
+        case 4: return "UINT64";
+      //case 5: // There is no type 5.
+        case 6: return "SSTR";
+        case 7: return "LSTR";
+        case 8: return "ABSTIME";
+        case 9: return "DELTATIME";
+        case 10: return "REF";
+        case 11: return "BOOL";
+        case 12: return "FLOAT";
+        case 13: return "DOUBLE";
+        case 14: return "UUID";
+        case 15: return "MAP";
+        case 16: return "INT8";
+        case 17: return "INT16";
+        case 18: return "INT32";
+        case 19: return "INT64";
+        case 20: return "OBJECT";
+        case 21: return "LIST";
+        case 22: return "ARRAY";
+        default:
+            return "unknown (" + boost::lexical_cast<std::string>(typeCode) + ')';
+    }
+}
+
 std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey)
 {
     return classKey.getPackageName() + ':' + classKey.getClassName();
@@ -77,35 +108,4 @@ std::string ConsoleUtils::toString(const qpid::console::SchemaStatistic &statist
 {
     return statistic.name + ':' + qmfTypeCodeToString(statistic.typeCode) + ':' +
            statistic.unit + ':' + statistic.desc;
-}
-
-std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
-{
-    // See Qpid's cpp/include/qmf/engine/Typecode.h
-    switch (typeCode) {
-        case 1: return "UINT8";
-        case 2: return "UINT16";
-        case 3: return "UINT32";
-        case 4: return "UINT64";
-      //case 5: // There is no type 5.
-        case 6: return "SSTR";
-        case 7: return "LSTR";
-        case 8: return "ABSTIME";
-        case 9: return "DELTATIME";
-        case 10: return "REF";
-        case 11: return "BOOL";
-        case 12: return "FLOAT";
-        case 13: return "DOUBLE";
-        case 14: return "UUID";
-        case 15: return "MAP";
-        case 16: return "INT8";
-        case 17: return "INT16";
-        case 18: return "INT32";
-        case 19: return "INT64";
-        case 20: return "OBJECT";
-        case 21: return "LIST";
-        case 22: return "ARRAY";
-        default:
-            return "unknown (" + boost::lexical_cast<std::string>(typeCode) + ')';
-    }
 }
