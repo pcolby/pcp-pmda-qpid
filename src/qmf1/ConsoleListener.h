@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-#include <qpid/console/ConsoleListener.h>
+#include "ConsoleLogger.h"
 
 #include <boost/optional/optional.hpp>
 #include <boost/thread/mutex.hpp>
 
 #include <queue>
 
-class ConsoleListener : public qpid::console::ConsoleListener {
+class ConsoleListener : public ConsoleLogger {
 
 public:
 
@@ -33,32 +33,12 @@ public:
 
     /* Overrides for qpid::console::ConsoleListener events below here */
 
-    virtual void brokerConnected(const qpid::console::Broker &broker);
-
-    virtual void brokerDisconnected(const qpid::console::Broker &broker);
-
-    virtual void newPackage(const std::string &package);
-
-    virtual void newClass(const qpid::console::ClassKey &classKey);
-
-    virtual void newAgent(const qpid::console::Agent &agent);
-
-    virtual void delAgent (const qpid::console::Agent &agent);
-
     virtual void objectProps(qpid::console::Broker &broker, qpid::console::Object &object);
 
     virtual void objectStats(qpid::console::Broker &broker, qpid::console::Object &object);
 
-    virtual void event(qpid::console::Event &event);
-
-    virtual void brokerInfo(qpid::console::Broker &broker);
-
 protected:
     virtual bool isSupported(const qpid::console::ClassKey &classKey);
-
-    virtual void logSchema(const qpid::console::Object &object);
-
-    virtual void logSchema(const qpid::console::SchemaClass &schema);
 
 private:
     typedef std::map<qpid::console::ObjectId, qpid::console::Object> ObjectMap;

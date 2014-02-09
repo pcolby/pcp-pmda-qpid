@@ -18,11 +18,6 @@
 
 #include "ConsoleUtils.h"
 
-#include <qpid/console/Agent.h>
-#include <qpid/console/Object.h>
-#include <qpid/console/Schema.h>
-#include <qpid/console/Value.h>
-
 #include <pcp/pmapi.h>
 #include <pcp/impl.h>
 
@@ -59,64 +54,12 @@ boost::optional<qpid::console::Object> ConsoleListener::getStats(const qpid::con
     return object;
 }
 
-void ConsoleListener::brokerConnected(const qpid::console::Broker &broker)
-{
-    __pmNotifyErr(LOG_INFO, "broker %s (%s) connected",
-                  broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
-}
-
-void ConsoleListener::brokerDisconnected(const qpid::console::Broker &broker)
-{
-    __pmNotifyErr(LOG_INFO, "broker %s (%s) disconnected",
-                  broker.getUrl().c_str(), broker.getBrokerId().str().c_str());
-}
-
-void ConsoleListener::newPackage(const std::string &package)
-{
-    if (pmDebug & DBG_TRACE_APPL2) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__, package.c_str());
-    }
-}
-
-void ConsoleListener::newClass(const qpid::console::ClassKey &classKey)
-{
-    if (pmDebug & DBG_TRACE_APPL2) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__,
-                      ConsoleUtils::toString(classKey).c_str());
-    }
-}
-
-void ConsoleListener::newAgent(const qpid::console::Agent &agent)
-{
-    if (pmDebug & DBG_TRACE_APPL2) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__, agent.getLabel().c_str());
-    }
-}
-
-void ConsoleListener::delAgent (const qpid::console::Agent &agent)
-{
-    if (pmDebug & DBG_TRACE_APPL2) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__, agent.getLabel().c_str());
-    }
-}
-
-void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/,
+void ConsoleListener::objectProps(qpid::console::Broker &broker,
                                   qpid::console::Object &object)
 {
     const bool supported = isSupported(object.getClassKey());
 
-    if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
-        __pmNotifyErr(LOG_DEBUG, "%s object: %s", __FUNCTION__,
-                      ConsoleUtils::toString(object, true).c_str());
-
-        logSchema(object);
-
-        for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
-            attribute != object.getAttributes().end(); ++attribute) {
-            __pmNotifyErr(LOG_DEBUG, "%s   attribute: %s => %s", __FUNCTION__,
-                          attribute->first.c_str(), attribute->second->str().c_str());
-        }
-    }
+    ConsoleLogger::objectProps(broker, object);
 
     if (supported) {
         boost::unique_lock<boost::mutex> lock(propsMutex);
@@ -137,23 +80,12 @@ void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/,
     }
 }
 
-void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/,
+void ConsoleListener::objectStats(qpid::console::Broker &broker,
                                   qpid::console::Object &object)
 {
     const bool supported = isSupported(object.getClassKey());
 
-    if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
-        __pmNotifyErr(LOG_DEBUG, "%s object: %s", __FUNCTION__,
-                      ConsoleUtils::toString(object, true).c_str());
-
-        logSchema(object);
-
-        for (qpid::console::Object::AttributeMap::const_iterator attribute = object.getAttributes().begin();
-            attribute != object.getAttributes().end(); ++attribute) {
-            __pmNotifyErr(LOG_DEBUG, "%s   attribute: %s => %s", __FUNCTION__,
-                          attribute->first.c_str(), attribute->second->str().c_str());
-        }
-    }
+    ConsoleLogger::objectStats(broker, object);
 
     if (supported) {
         boost::unique_lock<boost::mutex> lock(statsMutex);
@@ -174,59 +106,7 @@ void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/,
     }
 }
 
-void ConsoleListener::event(qpid::console::Event &event)
-{
-    if (pmDebug & DBG_TRACE_APPL2) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__,
-                      event.getClassKey().getClassName().c_str());
-        for (qpid::console::Object::AttributeMap::const_iterator attribute = event.getAttributes().begin();
-             attribute != event.getAttributes().end(); ++attribute)
-        {
-            __pmNotifyErr(LOG_DEBUG, "%s   attribute: %s => %s", __FUNCTION__,
-                          attribute->first.c_str(), attribute->second->str().c_str());
-        }
-    }
-}
-
-void ConsoleListener::brokerInfo(qpid::console::Broker &broker)
-{
-    if (pmDebug & DBG_TRACE_APPL1) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__, broker.getUrl().c_str());
-    }
-}
-
 bool ConsoleListener::isSupported(const qpid::console::ClassKey &classKey)
 {
     return (ConsoleUtils::getType(classKey) != ConsoleUtils::Other);
-}
-
-void ConsoleListener::logSchema(const qpid::console::Object &object)
-{
-    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
-    if (schemaClass != NULL) {
-        logSchema(*object.getSchema());
-    }
-}
-
-// Just for debugging.
-void ConsoleListener::logSchema(const qpid::console::SchemaClass &schema)
-{
-    static std::set<std::string> seenAlready;
-    if ((pmDebug & DBG_TRACE_APPL2) && (seenAlready.count(schema.getClassKey().str()) == 0)) {
-        __pmNotifyErr(LOG_DEBUG, "%s %s", __FUNCTION__,
-                      ConsoleUtils::toString(schema.getClassKey()).c_str());
-
-        for (std::vector<qpid::console::SchemaProperty *>::const_iterator property = schema.properties.begin();
-            property != schema.properties.end(); ++property) {
-            __pmNotifyErr(LOG_DEBUG, "%s   property: %s", __FUNCTION__,
-                          ConsoleUtils::toString(**property).c_str());
-        }
-
-        for (std::vector<qpid::console::SchemaStatistic *>::const_iterator statistic = schema.statistics.begin();
-            statistic != schema.statistics.end(); ++statistic) {
-            __pmNotifyErr(LOG_DEBUG, "%s   statistic: %s", __FUNCTION__,
-                          ConsoleUtils::toString(**statistic).c_str());
-        }
-        seenAlready.insert(schema.getClassKey().str());
-    }
 }

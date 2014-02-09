@@ -6,6 +6,7 @@ add_executable(
     pmda${PROJECT_NAME}
     QpidPmda.cpp
     ConsoleListener.cpp
+    ConsoleLogger.cpp
     ConsoleUtils.cpp
 )
 
