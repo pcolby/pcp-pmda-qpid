@@ -49,9 +49,12 @@ std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey) {
     return classKey.getPackageName() + ':' + classKey.getClassName();
 }
 
-std::string ConsoleUtils::toString(const qpid::console::Object &object) {
-    return object.getClassKey().getClassName() + " '" + getName(object) + "'"
-           " (" + toString(object.getObjectId()) + ')';
+std::string ConsoleUtils::toString(const qpid::console::Object &object,
+                                   bool includePackageName)
+{
+    const qpid::console::ClassKey &classKey = object.getClassKey();
+    return (includePackageName ? toString(classKey) : classKey.getClassName()) +
+           " '" + getName(object) + "' (" + toString(object.getObjectId()) + ')';
 }
 
 std::string ConsoleUtils::toString(const qpid::console::ObjectId &id) {

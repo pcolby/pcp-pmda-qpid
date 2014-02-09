@@ -39,7 +39,8 @@ public:
 
     static std::string toString(const qpid::console::ClassKey &classKey);
 
-    static std::string toString(const qpid::console::Object &object);
+    static std::string toString(const qpid::console::Object &object,
+                                bool includePackageName = false);
 
     static std::string toString(const qpid::console::ObjectId &id);
 

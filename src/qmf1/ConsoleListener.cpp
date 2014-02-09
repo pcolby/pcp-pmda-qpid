@@ -98,15 +98,8 @@ void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/, qpid::conso
     const bool supported = isSupported(object.getClassKey());
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
-        std::ostringstream message;
-        message << object.getClassKey().getPackageName() << ':'
-                << object.getClassKey().getClassName() << ':' << object.getObjectId();
-        const qpid::console::Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
-        if (name != object.getAttributes().end()) {
-            message << ' ' << name->second->str();
-        }
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s object: %s", __FILE__, __LINE__, __FUNCTION__,
-                      message.str().c_str());
+                      ConsoleUtils::toString(object, true).c_str());
 
         logSchema(object);
 
@@ -140,14 +133,8 @@ void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/, qpid::conso
     const bool supported = isSupported(object.getClassKey());
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
-        std::ostringstream message;
-        message << object.getSchema()->key.getPackageName() << ':' << object.getSchema()->key.getClassName();
-        const qpid::console::Object::AttributeMap::const_iterator name = object.getAttributes().find("name");
-        if (name != object.getAttributes().end()) {
-            message << ' ' << name->second->str();
-        }
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s object: %s", __FILE__, __LINE__, __FUNCTION__,
-                      message.str().c_str());
+                      ConsoleUtils::toString(object, true).c_str());
 
         logSchema(object);
 
@@ -212,9 +199,8 @@ void ConsoleListener::logSchema(const qpid::console::Object &object) {
 void ConsoleListener::logSchema(const qpid::console::SchemaClass &schema) {
     static std::set<std::string> seenAlready;
     if ((pmDebug & DBG_TRACE_APPL2) && (seenAlready.count(schema.getClassKey().str()) == 0)) {
-        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s:%s", __FILE__, __LINE__, __FUNCTION__,
-                      schema.getClassKey().getPackageName().c_str(),
-                      schema.getClassKey().getClassName().c_str());
+        __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
+                      ConsoleUtils::toString(schema.getClassKey()).c_str());
 
         for (std::vector<qpid::console::SchemaProperty *>::const_iterator property = schema.properties.begin();
             property != schema.properties.end(); ++property) {
