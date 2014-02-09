@@ -31,11 +31,13 @@ std::string ConsoleUtils::getName(const qpid::console::Object &object,
     return (name == attributes.end()) ? std::string() : name->second->asString();
 }
 
-ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::Object &object) {
+ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::Object &object)
+{
     return getType(object.getClassKey());
 }
 
-ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassKey &classKey) {
+ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassKey &classKey)
+{
     if (classKey.getPackageName() == "org.apache.qpid.broker") {
         const std::string &className = classKey.getClassName();
         if (className == "broker") return Broker;
@@ -45,7 +47,8 @@ ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassK
     return Other;
 }
 
-std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey) {
+std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey)
+{
     return classKey.getPackageName() + ':' + classKey.getClassName();
 }
 
@@ -57,13 +60,15 @@ std::string ConsoleUtils::toString(const qpid::console::Object &object,
            " '" + getName(object) + "' (" + toString(object.getObjectId()) + ')';
 }
 
-std::string ConsoleUtils::toString(const qpid::console::ObjectId &id) {
+std::string ConsoleUtils::toString(const qpid::console::ObjectId &id)
+{
     std::ostringstream stream;
     stream << id;
     return stream.str();
 }
 
-std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode) {
+std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
+{
     // See Qpid's cpp/include/qmf/engine/Typecode.h
     switch (typeCode) {
         case 1: return "UINT8";
