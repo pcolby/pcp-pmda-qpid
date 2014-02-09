@@ -21,7 +21,7 @@
 #include <qpid/console/SessionManager.h>
 #include <qpid/Url.h>
 
-#include "ConsoleListener.hpp"
+#include "ConsoleListener.h"
 
 class QpidPmda : public pcp::pmda {
 

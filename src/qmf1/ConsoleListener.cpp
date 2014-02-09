@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "ConsoleListener.hpp"
+#include "ConsoleListener.h"
 
 #include <qpid/console/Agent.h>
 #include <qpid/console/Object.h>
