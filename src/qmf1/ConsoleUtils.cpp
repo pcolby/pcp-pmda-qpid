@@ -26,7 +26,7 @@ std::string ConsoleUtils::getName(const qpid::console::Object &object,
     const qpid::console::Object::AttributeMap &attributes = object.getAttributes();
     qpid::console::Object::AttributeMap::const_iterator name = attributes.find("name");
     if ((name == attributes.end()) && (allowNodeName)) {
-        name == attributes.find("nodeName");
+        name = attributes.find("nodeName");
     }
     return (name == attributes.end()) ? std::string() : name->second->asString();
 }
