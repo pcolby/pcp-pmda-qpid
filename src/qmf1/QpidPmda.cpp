@@ -534,11 +534,11 @@ protected:
             case 1:
                 domain = &broker_domain;
                 break;
+            case 2:
             case 3:
-            case 4:
                 domain = &queue_domain;
                 break;
-            case 5:
+            case 4:
                 domain = &system_domain;
                 break;
         }
