@@ -66,14 +66,9 @@ void ConsoleListener::objectProps(qpid::console::Broker &broker,
         const ObjectMap::iterator iter = props.find(object.getObjectId());
         if (iter == props.end()) {
             props.insert(std::make_pair(object.getObjectId(), object));
-            boost::unique_lock<boost::mutex> lock(statsMutex);
-            if (stats.find(object.getObjectId()) == stats.end()) {
-                std::ostringstream stream;
-                stream << object.getObjectId();
-                __pmNotifyErr(LOG_INFO, "new props: %s", stream.str().c_str());
-                boost::unique_lock<boost::mutex> lock(newObjectsMutex);
-                newObjects.push(object.getObjectId());
-            }
+            __pmNotifyErr(LOG_INFO, "new %s", ConsoleUtils::toString(object).c_str());
+            boost::unique_lock<boost::mutex> lock(newObjectsMutex);
+            newObjects.push(object.getObjectId());
         } else {
             iter->second = object;
         }
