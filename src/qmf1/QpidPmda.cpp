@@ -544,28 +544,32 @@ protected:
         }
 
         char * instanceName = NULL;
-        //qpid::console::ObjectId * objectId = NULL;
-        void * objectId;
+        qpid::console::ObjectId * objectId = NULL;
         const int status = pmdaCacheLookup(*domain, metric.instance,
-                                           &instanceName, &objectId);
+                                           &instanceName, (void **)&objectId);
         if ((status != PMDA_CACHE_ACTIVE) && (status != PMDA_CACHE_INACTIVE)) {
             __pmNotifyErr(LOG_NOTICE, "pmdaCacheLookup failed for cluster %ju: %s",
                           (uintmax_t)metric.cluster, pmErrStr(status));
             throw pcp::exception(PM_ERR_INST);
         }
+        if (objectId == NULL) {
+            __pmNotifyErr(LOG_ERR, "pmdaCacheLookup returned NULL objectId for cluster %ju",
+                          (uintmax_t)metric.cluster);
+            throw pcp::exception(PM_ERR_INST);
+        }
 
-        //const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
-            //? consoleListener.getProps(objectId) : consoleListener.getStats(objectId);
-
-        return pcp::atom(metric.type,123);
-
-        /// @todo  Fetch the object's stats from our ConsoleListener. eg:
-        //consoleListener->getQueue(objectId).
+        const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
+            ? consoleListener.getProps(*objectId) : consoleListener.getStats(*objectId);
+        if (!object) {
+            __pmNotifyErr(LOG_NOTICE, "no %s for %s",
+                          (metric.cluster % 2 == 0) ? "properties" : "statistics",
+                          ConsoleUtils::toString(*object).c_str());
+            throw pcp::exception(PM_ERR_INST);
+        }
 
         /// @todo  Fetch the metric from object's stats.
-
+        //return pcp::atom(metric.type,123);
         throw pcp::exception(PM_ERR_NYI);
-        return pcp::atom(metric.type,time(NULL));
     }
 
 };
