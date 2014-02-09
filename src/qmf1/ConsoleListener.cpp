@@ -26,8 +26,6 @@
 #include <pcp/pmapi.h>
 #include <pcp/impl.h>
 
-#include <boost/lexical_cast.hpp>
-
 boost::optional<qpid::console::ObjectId> ConsoleListener::getNewObjectId() {
     boost::optional<qpid::console::ObjectId> id;
     boost::unique_lock<boost::mutex> lock(newObjectsMutex);
