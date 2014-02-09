@@ -484,7 +484,7 @@ protected:
     virtual void begin_fetch_values()
     {
         boost::optional<qpid::console::ObjectId> objectId;
-        while (objectId = consoleListener.getNewObjectId()) {
+        while ((objectId = consoleListener.getNewObjectId())) {
             const boost::optional<qpid::console::Object> props = consoleListener.getProps(*objectId);
             if (!props) {
                 __pmNotifyErr(LOG_NOTICE, "No properties found for object %s",
