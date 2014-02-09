@@ -92,14 +92,6 @@ void ConsoleListener::objectStats(qpid::console::Broker &broker,
         const ObjectMap::iterator iter = stats.find(object.getObjectId());
         if (iter == stats.end()) {
             stats.insert(std::make_pair(object.getObjectId(), object));
-            boost::unique_lock<boost::mutex> lock(propsMutex);
-            if (props.find(object.getObjectId()) == props.end()) {
-                std::ostringstream stream;
-                stream << object.getObjectId();
-                __pmNotifyErr(LOG_INFO, "new stats: %s", stream.str().c_str());
-                boost::unique_lock<boost::mutex> lock(newObjectsMutex);
-                newObjects.push(object.getObjectId());
-            }
         } else {
             iter->second = object;
         }
