@@ -567,9 +567,28 @@ protected:
             throw pcp::exception(PM_ERR_INST);
         }
 
-        /// @todo  Fetch the metric from object's stats.
-        //return pcp::atom(metric.type,123);
-        throw pcp::exception(PM_ERR_NYI);
+        const std::string &metricName = supported_metrics.at(metric.cluster).at(metric.item).metric_name;
+        const qpid::console::Object::AttributeMap &attributes = object->getAttributes();
+        const qpid::console::Object::AttributeMap::const_iterator attribute = attributes.find(metricName);
+        if (attribute == attributes.end()) {
+            __pmNotifyErr(LOG_NOTICE, "no %s metric found for %s", metricName.c_str(),
+                          ConsoleUtils::toString(*object).c_str());
+            throw pcp::exception(PM_ERR_VALUE);
+        }
+
+        switch (metric.type) {
+            case PM_TYPE_32:     return pcp::atom(metric.type, attribute->second->asInt());
+            case PM_TYPE_64:     return pcp::atom(metric.type, attribute->second->asInt64());
+            case PM_TYPE_U32:    return pcp::atom(metric.type, attribute->second->asUint());
+            case PM_TYPE_U64:    return pcp::atom(metric.type, attribute->second->asUint64());
+            case PM_TYPE_FLOAT:  return pcp::atom(metric.type, attribute->second->asFloat());
+            case PM_TYPE_DOUBLE: return pcp::atom(metric.type, attribute->second->asDouble());
+            //case PM_TYPE_STRING: return pcp::atom(metric.type, attribute->second->asInt());
+            default:
+                __pmNotifyErr(LOG_ERR, "unsupported metric type %d requested for metric '%s'",
+                              metric.type, metricName.c_str());
+                throw pcp::exception(PM_ERR_TYPE);
+        }
     }
 
 };
