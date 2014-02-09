@@ -528,10 +528,36 @@ protected:
 
     virtual fetch_value_result fetch_value(const metric_id &metric)
     {
-        return pcp::atom(metric.type,123);
+        pcp::instance_domain * domain = NULL;
+        switch (metric.cluster) {
+            case 0:
+            case 1:
+                domain = &broker_domain;
+                break;
+            case 3:
+            case 4:
+                domain = &queue_domain;
+                break;
+            case 5:
+                domain = &system_domain;
+                break;
+        }
 
-        /// @todo  Fetch the instance's name and object ID via:
-        //pmdaCacheLookup(indom, metric.instance, name, objectId);
+        char * instanceName = NULL;
+        //qpid::console::ObjectId * objectId = NULL;
+        void * objectId;
+        const int status = pmdaCacheLookup(*domain, metric.instance,
+                                           &instanceName, &objectId);
+        if ((status != PMDA_CACHE_ACTIVE) && (status != PMDA_CACHE_INACTIVE)) {
+            __pmNotifyErr(LOG_NOTICE, "pmdaCacheLookup failed for cluster %ju: %s",
+                          (uintmax_t)metric.cluster, pmErrStr(status));
+            throw pcp::exception(PM_ERR_INST);
+        }
+
+        //const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
+            //? consoleListener.getProps(objectId) : consoleListener.getStats(objectId);
+
+        return pcp::atom(metric.type,123);
 
         /// @todo  Fetch the object's stats from our ConsoleListener. eg:
         //consoleListener->getQueue(objectId).
