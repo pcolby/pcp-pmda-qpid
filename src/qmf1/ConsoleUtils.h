@@ -28,13 +28,18 @@ public:
         Other
     };
 
-    static ObjectSchemaType getType(const qpid::console::Object &object);
+    static std::string getName(const qpid::console::Object &object,
+                               const bool allowNodeName = true);
 
-    static ObjectSchemaType getType(const qpid::console::SchemaClass &schemaClass);
+    static ObjectSchemaType getType(const qpid::console::Object &object);
 
     static ObjectSchemaType getType(const qpid::console::ClassKey &classKey);
 
     static std::string qmfTypeCodeToString(const uint8_t typeCode);
+
+    static std::string toString(const qpid::console::ClassKey &classKey);
+
+    static std::string toString(const qpid::console::Object &object);
 
     static std::string toString(const qpid::console::ObjectId &id);
 

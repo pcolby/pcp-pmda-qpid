@@ -503,29 +503,25 @@ protected:
                         domain = &system_domain;
                         break;
                     default:
-                        __pmNotifyErr(LOG_ERR, "Object %s has unsupported type %d",
-                                      ConsoleUtils::toString(*objectId).c_str(),
-                                      type);
-                        __pmNotifyErr(LOG_ERR, "%s",
-                                      props->getAttributes().find("name")->second->asString().c_str());
+                        __pmNotifyErr(LOG_ERR, "%s has unsupported type",
+                                      ConsoleUtils::toString(*objectId).c_str());
                         return;
                 }
-                const qpid::console::Object::AttributeMap::const_iterator
-                    name = props->getAttributes().find("name");
-                if (name == props->getAttributes().end()) {
-                    __pmNotifyErr(LOG_WARNING, "Object %s has no name attribute",
+                const std::string instanceName = ConsoleUtils::getName(*props);
+                if (instanceName.empty()) {
+                    __pmNotifyErr(LOG_WARNING, "%s has no name attribute",
                                   ConsoleUtils::toString(*objectId).c_str());
                     return;
                 }
                 const int instanceId = pmdaCacheStoreKey(
-                    *domain, PMDA_CACHE_ADD, name->second->asString().c_str(),
-                    0, NULL, new qpid::console::ObjectId(*objectId));
+                    *domain, PMDA_CACHE_ADD, instanceName.c_str(),
+                     0, NULL, new qpid::console::ObjectId(*objectId));
                 if (instanceId < 0) {
-                    __pmNotifyErr(LOG_ERR, "pmdaCacheStore failed for object %s: %s",
+                    __pmNotifyErr(LOG_ERR, "pmdaCacheStore failed for %s: %s",
                                   ConsoleUtils::toString(*objectId).c_str(),
                                   pmErrStr(instanceId));
                 }
-                (*domain)(instanceId, name->second->asString());
+                (*domain)(instanceId, instanceName);
             }
         }
     }

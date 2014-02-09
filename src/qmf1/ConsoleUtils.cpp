@@ -16,18 +16,23 @@
 
 #include "ConsoleUtils.h"
 
+#include <qpid/console/Value.h>
+
 #include <boost/lexical_cast.hpp>
 
-ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::Object &object) {
-    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
-    if (schemaClass != NULL) {
-        return getType(*object.getSchema());
+std::string ConsoleUtils::getName(const qpid::console::Object &object,
+                                  const bool allowNodeName)
+{
+    const qpid::console::Object::AttributeMap &attributes = object.getAttributes();
+    qpid::console::Object::AttributeMap::const_iterator name = attributes.find("name");
+    if ((name == attributes.end()) && (allowNodeName)) {
+        name == attributes.find("nodeName");
     }
-    return Other;
+    return (name == attributes.end()) ? std::string() : name->second->asString();
 }
 
-ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::SchemaClass &schemaClass) {
-    return getType(schemaClass.getClassKey());
+ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::Object &object) {
+    return getType(object.getClassKey());
 }
 
 ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassKey &classKey) {
@@ -38,6 +43,15 @@ ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassK
         if (className == "system") return System;
     }
     return Other;
+}
+
+std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey) {
+    return classKey.getPackageName() + ':' + classKey.getClassName();
+}
+
+std::string ConsoleUtils::toString(const qpid::console::Object &object) {
+    return object.getClassKey().getClassName() + " '" + getName(object) + "'"
+           " (" + toString(object.getObjectId()) + ')';
 }
 
 std::string ConsoleUtils::toString(const qpid::console::ObjectId &id) {
