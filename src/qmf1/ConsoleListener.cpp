@@ -218,16 +218,14 @@ void ConsoleListener::logSchema(const qpid::console::SchemaClass &schema)
 
         for (std::vector<qpid::console::SchemaProperty *>::const_iterator property = schema.properties.begin();
             property != schema.properties.end(); ++property) {
-            __pmNotifyErr(LOG_DEBUG, "%s   property: %s:%s:%s:%s", __FUNCTION__,
-                          (*property)->name.c_str(), ConsoleUtils::qmfTypeCodeToString((*property)->typeCode).c_str(),
-                          (*property)->unit.c_str(), (*property)->desc.c_str());
+            __pmNotifyErr(LOG_DEBUG, "%s   property: %s", __FUNCTION__,
+                          ConsoleUtils::toString(**property).c_str());
         }
 
         for (std::vector<qpid::console::SchemaStatistic *>::const_iterator statistic = schema.statistics.begin();
             statistic != schema.statistics.end(); ++statistic) {
-            __pmNotifyErr(LOG_DEBUG, "%s   statistic: %s:%s:%s:%s", __FUNCTION__,
-                          (*statistic)->name.c_str(), ConsoleUtils::qmfTypeCodeToString((*statistic)->typeCode).c_str(),
-                          (*statistic)->unit.c_str(), (*statistic)->desc.c_str());
+            __pmNotifyErr(LOG_DEBUG, "%s   statistic: %s", __FUNCTION__,
+                          ConsoleUtils::toString(**statistic).c_str());
         }
         seenAlready.insert(schema.getClassKey().str());
     }

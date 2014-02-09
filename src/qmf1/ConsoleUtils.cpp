@@ -67,6 +67,18 @@ std::string ConsoleUtils::toString(const qpid::console::ObjectId &id)
     return stream.str();
 }
 
+std::string ConsoleUtils::toString(const qpid::console::SchemaProperty &property)
+{
+    return property.name + ':' + qmfTypeCodeToString(property.typeCode) + ':' +
+           property.unit + ':' + property.desc;
+}
+
+std::string ConsoleUtils::toString(const qpid::console::SchemaStatistic &statistic)
+{
+    return statistic.name + ':' + qmfTypeCodeToString(statistic.typeCode) + ':' +
+           statistic.unit + ':' + statistic.desc;
+}
+
 std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
 {
     // See Qpid's cpp/include/qmf/engine/Typecode.h

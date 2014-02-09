@@ -44,4 +44,8 @@ public:
 
     static std::string toString(const qpid::console::ObjectId &id);
 
+    static std::string toString(const qpid::console::SchemaProperty &property);
+
+    static std::string toString(const qpid::console::SchemaStatistic &statistic);
+
 };
