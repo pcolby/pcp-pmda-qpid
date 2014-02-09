@@ -195,7 +195,7 @@ protected:
             (3, "mgmtPubInterval", pcp::type<uint16_t>(), PM_SEM_DISCRETE,
              pcp::units(0,1,0, 0,PM_TIME_SEC,0), &broker_domain,
              "Interval for management broadcasts")
-            (4, "mgmtPublish", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+            (4, "mgmtPublish", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &broker_domain,
              "Broker's management agent sends unsolicited data on the publish interval")
             (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
@@ -324,11 +324,11 @@ protected:
             (1, "arguments", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain,
              "Arguments supplied in queue.declare")
-            (2, "autoDelete", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+            (2, "autoDelete", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain)
-            (3, "durable", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+            (3, "durable", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain)
-            (4, "exclusive", pcp::type<uint8_t>(), PM_SEM_DISCRETE,
+            (4, "exclusive", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain)
             (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
              pcp::units(0,0,0, 0,0,0), &queue_domain)
@@ -404,7 +404,7 @@ protected:
             (22, "discardsTtl", pcp::type<uint64_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
              "Messages discarded due to TTL expiration")
-            (23, "flowStopped", pcp::type<uint8_t>(), PM_SEM_INSTANT,
+            (23, "flowStopped", pcp::type<std::string>(), PM_SEM_INSTANT,
              pcp::units(0,0,0, 0,0,0), &queue_domain, "Flow control active.")
             (24, "flowStoppedCount", pcp::type<uint32_t>(), PM_SEM_COUNTER,
              pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
@@ -584,7 +584,24 @@ protected:
                 case PM_TYPE_U64:    return pcp::atom(metric.type, attribute->second->asUint64());
                 case PM_TYPE_FLOAT:  return pcp::atom(metric.type, attribute->second->asFloat());
                 case PM_TYPE_DOUBLE: return pcp::atom(metric.type, attribute->second->asDouble());
-                case PM_TYPE_STRING: return pcp::atom(metric.type, strdup(attribute->second->asString().c_str()));
+                case PM_TYPE_STRING:
+                    if (attribute->second->isBool()) {
+                        return pcp::atom(metric.type, strdup(
+                            attribute->second->asBool() ? "true" : "false"));
+                    } else if (attribute->second->isMap()) {
+                        /// @todo
+                    } else if (attribute->second->isNull()) {
+                        return pcp::atom(metric.type, strdup("null"));
+                    } else if (attribute->second->isObjectId()) {
+                        return pcp::atom(metric.type, strdup(
+                            ConsoleUtils::toString(attribute->second->asObjectId()).c_str()));
+                    } else if (attribute->second->isUuid()) {
+                        return pcp::atom(metric.type, strdup(
+                            attribute->second->asUuid().str().c_str()));
+                    } else {
+                        return pcp::atom(metric.type, strdup(
+                            attribute->second->asString().c_str()));
+                    }
                 default:
                     __pmNotifyErr(LOG_ERR, "%s metric uses unsupported type %d",
                                   metricName.c_str(), metric.type);
