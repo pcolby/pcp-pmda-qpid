@@ -22,6 +22,7 @@
 #include <qpid/Url.h>
 
 #include "ConsoleListener.h"
+#include "ConsoleUtils.h"
 
 class QpidPmda : public pcp::pmda {
 
@@ -487,23 +488,23 @@ protected:
             const boost::optional<qpid::console::Object> props = consoleListener.getProps(*objectId);
             if (!props) {
                 __pmNotifyErr(LOG_NOTICE, "No properties found for object %s",
-                              ConsoleListener::toString(*objectId).c_str());
+                              ConsoleUtils::toString(*objectId).c_str());
             } else {
-                const ConsoleListener::ObjectSchemaType type = ConsoleListener::getType(*props);
+                const ConsoleUtils::ObjectSchemaType type = ConsoleUtils::getType(*props);
                 pcp::instance_domain * domain = NULL;
                 switch (type) {
-                    case ConsoleListener::Broker:
+                    case ConsoleUtils::Broker:
                         domain = &broker_domain;
                         break;
-                    case ConsoleListener::Queue:
+                    case ConsoleUtils::Queue:
                         domain = &queue_domain;
                         break;
-                    case ConsoleListener::System:
+                    case ConsoleUtils::System:
                         domain = &system_domain;
                         break;
                     default:
                         __pmNotifyErr(LOG_ERR, "Object %s has unsupported type %d",
-                                      ConsoleListener::toString(*objectId).c_str(),
+                                      ConsoleUtils::toString(*objectId).c_str(),
                                       type);
                         __pmNotifyErr(LOG_ERR, "%s",
                                       props->getAttributes().find("name")->second->asString().c_str());
@@ -513,7 +514,7 @@ protected:
                     name = props->getAttributes().find("name");
                 if (name == props->getAttributes().end()) {
                     __pmNotifyErr(LOG_WARNING, "Object %s has no name attribute",
-                                  ConsoleListener::toString(*objectId).c_str());
+                                  ConsoleUtils::toString(*objectId).c_str());
                     return;
                 }
                 const int instanceId = pmdaCacheStoreKey(
@@ -521,7 +522,7 @@ protected:
                     0, NULL, new qpid::console::ObjectId(*objectId));
                 if (instanceId < 0) {
                     __pmNotifyErr(LOG_ERR, "pmdaCacheStore failed for object %s: %s",
-                                  ConsoleListener::toString(*objectId).c_str(),
+                                  ConsoleUtils::toString(*objectId).c_str(),
                                   pmErrStr(instanceId));
                 }
                 (*domain)(instanceId, name->second->asString());

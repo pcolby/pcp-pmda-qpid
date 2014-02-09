@@ -2,7 +2,12 @@ cmake_minimum_required (VERSION 2.6)
 
 project(qpid-qmf1)
 
-add_executable(pmda${PROJECT_NAME} QpidPmda.cpp ConsoleListener.cpp)
+add_executable(
+    pmda${PROJECT_NAME}
+    QpidPmda.cpp
+    ConsoleListener.cpp
+    ConsoleUtils.cpp
+)
 
 find_package(Boost COMPONENTS program_options REQUIRED)
 

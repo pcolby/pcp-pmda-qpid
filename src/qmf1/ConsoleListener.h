@@ -24,12 +24,6 @@
 class ConsoleListener : public qpid::console::ConsoleListener {
 
 public:
-    enum ObjectSchemaType {
-        Broker,
-        Queue,
-        System,
-        Other
-    };
 
     boost::optional<qpid::console::ObjectId> getNewObjectId();
 
@@ -37,16 +31,7 @@ public:
 
     boost::optional<qpid::console::Object> getStats(const qpid::console::ObjectId &id);
 
-    static ObjectSchemaType getType(const qpid::console::Object &object);
-
-    static ObjectSchemaType getType(const qpid::console::SchemaClass &schemaClass);
-
-    static ObjectSchemaType getType(const qpid::console::ClassKey &classKey);
-
-    static std::string toString(const qpid::console::ObjectId &id);
-
-
-    // Overrides for qpid::console::ConsoleListener events.
+    /* Overrides for qpid::console::ConsoleListener events below here */
 
     virtual void brokerConnected(const qpid::console::Broker &broker);
 
@@ -78,8 +63,6 @@ protected:
     virtual void logSchema(const qpid::console::Object &object);
 
     virtual void logSchema(const qpid::console::SchemaClass &schema);
-
-    virtual std::string qmfTypeCodeToString(const uint8_t typeCode);
 
 private:
     typedef std::map<qpid::console::ObjectId, qpid::console::Object> ObjectMap;

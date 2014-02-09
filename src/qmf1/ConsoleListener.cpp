@@ -16,6 +16,8 @@
 
 #include "ConsoleListener.h"
 
+#include "ConsoleUtils.h"
+
 #include <qpid/console/Agent.h>
 #include <qpid/console/Object.h>
 #include <qpid/console/Schema.h>
@@ -54,34 +56,6 @@ boost::optional<qpid::console::Object> ConsoleListener::getStats(const qpid::con
         object = iter->second;
     }
     return object;
-}
-
-ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::Object &object) {
-    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
-    if (schemaClass != NULL) {
-        return getType(*object.getSchema());
-    }
-    return Other;
-}
-
-ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::SchemaClass &schemaClass) {
-    return getType(schemaClass.getClassKey());
-}
-
-ConsoleListener::ObjectSchemaType ConsoleListener::getType(const qpid::console::ClassKey &classKey) {
-    if (classKey.getPackageName() == "org.apache.qpid.broker") {
-        const std::string &className = classKey.getClassName();
-        if (className == "broker") return Broker;
-        if (className == "queue")  return Queue;
-        if (className == "system") return System;
-    }
-    return Other;
-}
-
-std::string ConsoleListener::toString(const qpid::console::ObjectId &id) {
-    std::ostringstream stream;
-    stream << id;
-    return stream.str();
 }
 
 void ConsoleListener::brokerConnected(const qpid::console::Broker &broker) {
@@ -235,7 +209,7 @@ bool ConsoleListener::isSupported(const qpid::console::SchemaClass &schemaClass)
 }
 
 bool ConsoleListener::isSupported(const qpid::console::ClassKey &classKey) {
-    return (getType(classKey) != Other);
+    return (ConsoleUtils::getType(classKey) != ConsoleUtils::Other);
 }
 
 void ConsoleListener::logSchema(const qpid::console::Object &object) {
@@ -256,46 +230,16 @@ void ConsoleListener::logSchema(const qpid::console::SchemaClass &schema) {
         for (std::vector<qpid::console::SchemaProperty *>::const_iterator property = schema.properties.begin();
             property != schema.properties.end(); ++property) {
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   property: %s:%s:%s:%s", __FILE__, __LINE__, __FUNCTION__,
-                          (*property)->name.c_str(), qmfTypeCodeToString((*property)->typeCode).c_str(),
+                          (*property)->name.c_str(), ConsoleUtils::qmfTypeCodeToString((*property)->typeCode).c_str(),
                           (*property)->unit.c_str(), (*property)->desc.c_str());
         }
 
         for (std::vector<qpid::console::SchemaStatistic *>::const_iterator statistic = schema.statistics.begin();
             statistic != schema.statistics.end(); ++statistic) {
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s   statistic: %s:%s:%s:%s", __FILE__, __LINE__, __FUNCTION__,
-                          (*statistic)->name.c_str(), qmfTypeCodeToString((*statistic)->typeCode).c_str(),
+                          (*statistic)->name.c_str(), ConsoleUtils::qmfTypeCodeToString((*statistic)->typeCode).c_str(),
                           (*statistic)->unit.c_str(), (*statistic)->desc.c_str());
         }
         seenAlready.insert(schema.getClassKey().str());
-    }
-}
-
-std::string ConsoleListener::qmfTypeCodeToString(const uint8_t typeCode) {
-    // See Qpid's cpp/include/qmf/engine/Typecode.h
-    switch (typeCode) {
-        case 1: return "UINT8";
-        case 2: return "UINT16";
-        case 3: return "UINT32";
-        case 4: return "UINT64";
-      //case 5: // There is no type 5.
-        case 6: return "SSTR";
-        case 7: return "LSTR";
-        case 8: return "ABSTIME";
-        case 9: return "DELTATIME";
-        case 10: return "REF";
-        case 11: return "BOOL";
-        case 12: return "FLOAT";
-        case 13: return "DOUBLE";
-        case 14: return "UUID";
-        case 15: return "MAP";
-        case 16: return "INT8";
-        case 17: return "INT16";
-        case 18: return "INT32";
-        case 19: return "INT64";
-        case 20: return "OBJECT";
-        case 21: return "LIST";
-        case 22: return "ARRAY";
-        default:
-            return "unknown (" + boost::lexical_cast<std::string>(typeCode) + ')';
     }
 }
