@@ -95,7 +95,7 @@ void ConsoleListener::delAgent (const qpid::console::Agent &agent) {
 }
 
 void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/, qpid::console::Object &object) {
-    const bool supported = this->isSupported(object);
+    const bool supported = isSupported(object.getClassKey());
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
         std::ostringstream message;
@@ -137,7 +137,7 @@ void ConsoleListener::objectProps(qpid::console::Broker &/*broker*/, qpid::conso
 }
 
 void ConsoleListener::objectStats(qpid::console::Broker &/*broker*/, qpid::console::Object &object) {
-    const bool supported = this->isSupported(object);
+    const bool supported = isSupported(object.getClassKey());
 
     if (pmDebug & (supported ? DBG_TRACE_APPL1 : DBG_TRACE_APPL2)) {
         std::ostringstream message;
@@ -195,15 +195,6 @@ void ConsoleListener::brokerInfo(qpid::console::Broker &broker) {
         __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__,
                       broker.getUrl().c_str());
     }
-}
-
-bool ConsoleListener::isSupported(const qpid::console::Object &object) {
-    const qpid::console::SchemaClass * const schemaClass = object.getSchema();
-    return (schemaClass == NULL) ? false : isSupported(*schemaClass);
-}
-
-bool ConsoleListener::isSupported(const qpid::console::SchemaClass &schemaClass) {
-    return isSupported(schemaClass.getClassKey());
 }
 
 bool ConsoleListener::isSupported(const qpid::console::ClassKey &classKey) {
