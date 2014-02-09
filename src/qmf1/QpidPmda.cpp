@@ -589,7 +589,9 @@ protected:
                         return pcp::atom(metric.type, strdup(
                             attribute->second->asBool() ? "true" : "false"));
                     } else if (attribute->second->isMap()) {
-                        /// @todo
+                        std::ostringstream stream;
+                        stream << attribute->second->asMap();
+                        return pcp::atom(metric.type, strdup(stream.str().c_str()));
                     } else if (attribute->second->isNull()) {
                         return pcp::atom(metric.type, strdup("null"));
                     } else if (attribute->second->isObjectId()) {
