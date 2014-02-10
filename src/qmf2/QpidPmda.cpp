@@ -29,7 +29,7 @@ public:
 
     virtual int get_default_pmda_domain_number() const
     {
-        return 123; /// @todo Pick something appropriate.
+        return 124; // Reserved by PCP for Qpid PMDAs.
     }
 
 protected:
