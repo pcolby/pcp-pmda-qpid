@@ -24,12 +24,15 @@
 class ConsoleListener : public ConsoleLogger {
 
 public:
+    ConsoleListener();
 
     boost::optional<qpid::console::ObjectId> getNewObjectId();
 
     boost::optional<qpid::console::Object> getProps(const qpid::console::ObjectId &id);
 
     boost::optional<qpid::console::Object> getStats(const qpid::console::ObjectId &id);
+
+    void setIncludeAutoDelete(const bool include = true);
 
     /* Overrides for qpid::console::ConsoleListener events below here */
 
@@ -38,6 +41,10 @@ public:
     virtual void objectStats(qpid::console::Broker &broker, qpid::console::Object &object);
 
 protected:
+    bool includeAutoDelete;
+
+    virtual bool isAutoDelete(const qpid::console::Object &object);
+
     virtual bool isSupported(const qpid::console::ClassKey &classKey);
 
 private:

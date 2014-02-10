@@ -72,8 +72,7 @@ protected:
              PCP_CPP_BOOST_PO_VALUE_NAME("interval"), "heartbeat interval in seconds")
             ("locale", value<double>(), "locale to use for Qpid connections")
             ("protocol", value<std::string>(), "version of AMQP to use (e.g. amqp0-10 or amqp1.0)")
-            ("tcp-nodelay", value<bool>()PCP_CPP_BOOST_PO_IMPLICIT_VALUE(false),
-             "whether nagle should be enabled")
+            ("tcp-nodelay", bool_switch(), "whether nagle should be enabled")
             ("transport", value<std::string>(), "underlying transport to use (e.g. tcp, ssl, rdma)");
         options_description authenticationOptions("Broker authentication options");
         authenticationOptions.add_options()
@@ -83,7 +82,13 @@ protected:
             ("sasl-min-ssf", value<unsigned int>(), "minimum acceptable security strength factor")
             ("sasl-max-ssf", value<unsigned int>(), "maximum acceptable security strength factor")
             ("sasl-service", value<std::string>(), "service name, if needed by SASL mechanism");
-        return connectionOptions.add(authenticationOptions).add(pcp::pmda::get_supported_options());
+        options_description queueOptions("Queue options");
+        queueOptions.add_options()
+            ("include-auto-delete", bool_switch(), "include auto-delete queues");
+        return connectionOptions
+                .add(authenticationOptions)
+                .add(queueOptions)
+                .add(pcp::pmda::get_supported_options());
     }
 
     virtual boost::program_options::options_description get_supported_hidden_options() const
@@ -144,6 +149,10 @@ protected:
                 qpidConnectionSettings.push_back(connection);
             }
         }
+
+        consoleListener.setIncludeAutoDelete(
+            (options.count("include-auto-delete")) && (options["include-auto-delete"].as<bool>())
+        );
 
         nonPmdaMode = ((options.count("no-pmda") > 0) && (options["no-pmda"].as<bool>()));
         return true;
