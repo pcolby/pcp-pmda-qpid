@@ -8,9 +8,13 @@ To build the `pcp-pmda-qpid` RPMS:
 
 2. Install the pre-requisites, if not already:
   ```bash
-  sudo yum install boost cmake pcp-libs pcp-libs-devel \
+  sudo yum install boost cmake pcp-libs pcp-libs-devel [pcp-pmda-cpp-devel] \
       qpid-cpp-client qpid-cpp-client-devel qpid-qmf qpid-qmf-devel
   ```
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+  * Note, `pcp-pmda-cpp-devel` is not a standard Fedora / Red Hat package.  If
+    its not already within your own yum repos, you build it spearately via
+    [these instructions](https://github.com/pcolby/pcp-pmda-cpp/tree/master/package/rpm).
 
 3. Download the source archive:
   ```bash
