@@ -43,7 +43,7 @@ to Performance Co-Pilot (PCP) using the PMDA++ library.
 %package qmf1
 Summary: Qpid PMDA using QMFv1
 Group: Development/Libraries
-Requires: boost-progrma-options
+Requires: boost-program-options
 Requires: pcp-libs
 Requires: qpid-cpp-client
 Requires: qpid-qmf
