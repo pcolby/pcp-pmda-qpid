@@ -55,5 +55,5 @@ Qpid PMDA using QMFv1.
 %{pcp_pmdas_dir}/qpid-qmf1
 
 %changelog
-* Sat Feb 15 2014 Paul Colby <git@colby.id.au> - 0.0.0-1
+* Sat Feb 15 2014 Paul Colby <git@colby.id.au> - 0.1.0-1
 - initial %{name} spec file.
