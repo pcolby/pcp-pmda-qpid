@@ -537,6 +537,7 @@ protected:
 
     virtual fetch_value_result fetch_value(const metric_id &metric)
     {
+        // Get the metric's instance domain.
         pcp::instance_domain * domain = NULL;
         switch (metric.cluster) {
             case 0:
@@ -552,6 +553,7 @@ protected:
                 break;
         }
 
+        // Fetch the Qpid objectId from the PMDA cache (we added in begin_fetch_values).
         char * instanceName = NULL;
         void * opaque;
         const int status = pmdaCacheLookup(*domain, metric.instance, &instanceName, &opaque);
@@ -567,6 +569,7 @@ protected:
         }
         const qpid::console::ObjectId * const objectId = static_cast<qpid::console::ObjectId *>(opaque);
 
+        // Fetch the object's propeties or statistics, according to the metric cluster.
         const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
             ? consoleListener.getProps(*objectId) : consoleListener.getStats(*objectId);
         if (!object) {
@@ -576,6 +579,7 @@ protected:
             throw pcp::exception(PM_ERR_INST);
         }
 
+        // Get the name of metric corresponding to the metric item, and fetch the metric.
         const std::string &metricName = supported_metrics.at(metric.cluster).at(metric.item).metric_name;
         const qpid::console::Object::AttributeMap &attributes = object->getAttributes();
         const qpid::console::Object::AttributeMap::const_iterator attribute = attributes.find(metricName);
@@ -585,6 +589,7 @@ protected:
             throw pcp::exception(PM_ERR_VALUE);
         }
 
+        // Return the metric value as a PCP atom.
         try{
             switch (metric.type) {
                 case PM_TYPE_32:     return pcp::atom(metric.type, attribute->second->asInt());
