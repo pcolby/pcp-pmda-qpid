@@ -553,19 +553,19 @@ protected:
         }
 
         char * instanceName = NULL;
-        qpid::console::ObjectId * objectId = NULL;
-        const int status = pmdaCacheLookup(*domain, metric.instance,
-                                           &instanceName, (void **)&objectId);
+        void * opaque;
+        const int status = pmdaCacheLookup(*domain, metric.instance, &instanceName, &opaque);
         if ((status != PMDA_CACHE_ACTIVE) && (status != PMDA_CACHE_INACTIVE)) {
             __pmNotifyErr(LOG_NOTICE, "pmdaCacheLookup failed for cluster %ju: %s",
                           (uintmax_t)metric.cluster, pmErrStr(status));
             throw pcp::exception(PM_ERR_INST);
         }
-        if (objectId == NULL) {
-            __pmNotifyErr(LOG_ERR, "pmdaCacheLookup returned NULL objectId for cluster %ju",
+        if (opaque == NULL) {
+            __pmNotifyErr(LOG_ERR, "pmdaCacheLookup returned NULL for cluster %ju",
                           (uintmax_t)metric.cluster);
             throw pcp::exception(PM_ERR_INST);
         }
+        const qpid::console::ObjectId * const objectId = static_cast<qpid::console::ObjectId *>(opaque);
 
         const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
             ? consoleListener.getProps(*objectId) : consoleListener.getStats(*objectId);
