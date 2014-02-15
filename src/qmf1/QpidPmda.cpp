@@ -120,7 +120,8 @@ protected:
             if (options.count(key)) { \
                 const std::string &value = options.at(key).as<std::string>(); \
                 if (pmDebug & DBG_TRACE_APPL0) { \
-                    __pmNotifyErr(LOG_DEBUG, "%s=%s", name, value.c_str()); \
+                    __pmNotifyErr(LOG_DEBUG, "%s %s=%s", __FUNCTION__, \
+                                  name, value.c_str()); \
                 } \
                 if (setenv(name, value.c_str(), true) < 0) { \
                     throw pcp::exception(-errno); \
@@ -141,7 +142,8 @@ protected:
                     if (pmDebug & DBG_TRACE_APPL0) { \
                         std::ostringstream stream; \
                         stream << connection.member; \
-                        __pmNotifyErr(LOG_DEBUG, "%s=%s", key, stream.str().c_str()); \
+                        __pmNotifyErr(LOG_DEBUG, "%s %s=%s", __FUNCTION__, \
+                                      key, stream.str().c_str()); \
                     } \
                 }
             SET_CONNECTION_OPTION(virtualhost, "virtualhost", std::string)
@@ -158,12 +160,11 @@ protected:
             SET_CONNECTION_OPTION(maxSsf, "sasl-min-ssf", unsigned int)
             SET_CONNECTION_OPTION(service, "sasl-service", std::string)
             SET_CONNECTION_OPTION(sslCertName, "ssl-cert-name", std::string)
+            SET_CONNECTION_OPTION(protocol, "transport", std::string)
             #undef SET_CONNECTION_OPTION
 
-            const qpid::Url url = (options.count("transport"))
-                ? qpid::Url(*iter, options.at("transport").as<std::string>())
-                : qpid::Url(*iter);
-            __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__, url.str().c_str());
+            const qpid::Url url(*iter);
+            __pmNotifyErr(LOG_DEBUG, "%s URL: %s", __FUNCTION__, url.str().c_str());
             if (!url.getUser().empty()) {
                 connection.username = url.getUser();
             }
@@ -171,9 +172,8 @@ protected:
                 connection.password = url.getPass();
             }
             for (qpid::Url::const_iterator i = url.begin(); i != url.end(); ++i) {
-                __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s:%s:%u", __FILE__, __LINE__, __FUNCTION__,
-                              i->protocol.c_str(), i->host.c_str(), i->port);
-                connection.protocol = i->protocol;
+                __pmNotifyErr(LOG_DEBUG, "%s Address: %s:%u", __FUNCTION__,
+                              i->host.c_str(), i->port);
                 connection.host = i->host;
                 connection.port = i->port;
                 qpidConnectionSettings.push_back(connection);
