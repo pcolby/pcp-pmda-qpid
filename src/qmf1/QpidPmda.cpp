@@ -68,6 +68,12 @@ protected:
             ("broker,b", value<string_vector>()->
              default_value(string_vector(1, "localhost"), "localhost")
              PCP_CPP_BOOST_PO_VALUE_NAME("url"), "message broker url(s)")
+            ("cert-db", value<std::string>()
+             PCP_CPP_BOOST_PO_VALUE_NAME("dir"), "path to NSS database")
+            ("cert-name", value<std::string>()
+             PCP_CPP_BOOST_PO_VALUE_NAME("name"), "name of NSS certificate")
+            ("cert-password-file", value<std::string>()
+             PCP_CPP_BOOST_PO_VALUE_NAME("file"), "password file for NSS database")
             ("heartbeat", value<double>()
              PCP_CPP_BOOST_PO_VALUE_NAME("interval"), "heartbeat interval in seconds")
             ("locale", value<double>(), "locale to use for Qpid connections")
@@ -109,27 +115,49 @@ protected:
             return false;
         }
 
+        // Export any NSS options to the environment, as expected by the NSS libraries.
+        #define SET_NSS_OPTION(key, name) \
+            if (options.count(key)) { \
+                const std::string &value = options.at(key).as<std::string>(); \
+                if (pmDebug & DBG_TRACE_APPL0) { \
+                    __pmNotifyErr(LOG_DEBUG, "%s=%s", name, value.c_str()); \
+                } \
+                if (setenv(name, value.c_str(), true) < 0) { \
+                    throw pcp::exception(-errno); \
+                } \
+            }
+        SET_NSS_OPTION("cert-db",            "QPID_SSL_CERT_DB")
+        SET_NSS_OPTION("cert-name",          "QPID_SSL_CERT_NAME")
+        SET_NSS_OPTION("cert-password-file", "QPID_SSL_CERT_PASSWORD_FILE")
+        #undef SET_NSS_OPTION
+
         // Configure our Qpid connection(s) per the command line options.
         const string_vector &brokers = options.at("broker").as<string_vector>();
         for (string_vector::const_iterator iter = brokers.begin(); iter != brokers.end(); ++iter) {
             qpid::client::ConnectionSettings connection;
             #define SET_CONNECTION_OPTION(member, key, type) \
-                if (options.count(key)) \
-                    connection.member = options.at(key).as<type>()
-            SET_CONNECTION_OPTION(virtualhost, "virtualhost", std::string);
-            SET_CONNECTION_OPTION(username, "username", std::string);
-            SET_CONNECTION_OPTION(password, "password", std::string);
-            SET_CONNECTION_OPTION(mechanism, "sasl-mechanism", std::string);
-            SET_CONNECTION_OPTION(locale, "locale", std::string);
-            SET_CONNECTION_OPTION(heartbeat, "heartbeat", uint16_t);
-            SET_CONNECTION_OPTION(maxChannels, "max-channels", uint16_t);
-            SET_CONNECTION_OPTION(maxFrameSize, "max-frame-size", uint16_t);
-            SET_CONNECTION_OPTION(bounds, "bounds", unsigned int);
-            SET_CONNECTION_OPTION(tcpNoDelay, "tcp-no-delay", bool);
-            SET_CONNECTION_OPTION(minSsf, "sasl-min-ssf", unsigned int);
-            SET_CONNECTION_OPTION(maxSsf, "sasl-min-ssf", unsigned int);
-            SET_CONNECTION_OPTION(service, "sasl-service", std::string);
-            SET_CONNECTION_OPTION(sslCertName, "ssl-cert-name", std::string);
+                if (options.count(key)) { \
+                    connection.member = options.at(key).as<type>(); \
+                    if (pmDebug & DBG_TRACE_APPL0) { \
+                        std::ostringstream stream; \
+                        stream << connection.member; \
+                        __pmNotifyErr(LOG_DEBUG, "%s=%s", key, stream.str().c_str()); \
+                    } \
+                }
+            SET_CONNECTION_OPTION(virtualhost, "virtualhost", std::string)
+            SET_CONNECTION_OPTION(username, "username", std::string)
+            SET_CONNECTION_OPTION(password, "password", std::string)
+            SET_CONNECTION_OPTION(mechanism, "sasl-mechanism", std::string)
+            SET_CONNECTION_OPTION(locale, "locale", std::string)
+            SET_CONNECTION_OPTION(heartbeat, "heartbeat", uint16_t)
+            SET_CONNECTION_OPTION(maxChannels, "max-channels", uint16_t)
+            SET_CONNECTION_OPTION(maxFrameSize, "max-frame-size", uint16_t)
+            SET_CONNECTION_OPTION(bounds, "bounds", unsigned int)
+            SET_CONNECTION_OPTION(tcpNoDelay, "tcp-no-delay", bool)
+            SET_CONNECTION_OPTION(minSsf, "sasl-min-ssf", unsigned int)
+            SET_CONNECTION_OPTION(maxSsf, "sasl-min-ssf", unsigned int)
+            SET_CONNECTION_OPTION(service, "sasl-service", std::string)
+            SET_CONNECTION_OPTION(sslCertName, "ssl-cert-name", std::string)
             #undef SET_CONNECTION_OPTION
 
             const qpid::Url url = (options.count("transport"))
