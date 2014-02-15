@@ -132,7 +132,9 @@ protected:
             SET_CONNECTION_OPTION(sslCertName, "ssl-cert-name", std::string);
             #undef SET_CONNECTION_OPTION
 
-            qpid::Url url(*iter);
+            const qpid::Url url = (options.count("transport"))
+                ? qpid::Url(*iter, options.at("transport").as<std::string>())
+                : qpid::Url(*iter);
             __pmNotifyErr(LOG_DEBUG, "%s:%d:%s %s", __FILE__, __LINE__, __FUNCTION__, url.str().c_str());
             if (!url.getUser().empty()) {
                 connection.username = url.getUser();
