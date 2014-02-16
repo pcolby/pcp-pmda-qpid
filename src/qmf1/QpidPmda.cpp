@@ -116,6 +116,15 @@ protected:
             return false;
         }
 
+        // Enable Qpid's logging at a level appropriate to the selected debug options.
+        if (pmDebug & DBG_TRACE_APPL2) {
+            qpid::log::Logger::instance().reconfigure(std::vector<std::string>(1, "trace+"));
+        } else if (pmDebug & DBG_TRACE_APPL1) {
+            qpid::log::Logger::instance().reconfigure(std::vector<std::string>(1, "debug+"));
+        } else {
+            qpid::log::Logger::instance().reconfigure(std::vector<std::string>(1, "info+"));
+        }
+
         // Export any NSS options to the environment, as expected by the NSS libraries.
         #define SET_NSS_OPTION(key, name) \
             if (options.count(key)) { \
