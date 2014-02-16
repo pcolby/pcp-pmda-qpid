@@ -8,6 +8,7 @@ add_executable(
     ConsoleListener.cpp
     ConsoleLogger.cpp
     ConsoleUtils.cpp
+    QpidLogger.cpp
 )
 
 find_package(Boost COMPONENTS program_options REQUIRED)

@@ -23,6 +23,7 @@
 
 #include "ConsoleListener.h"
 #include "ConsoleUtils.h"
+#include "QpidLogger.h"
 
 class QpidPmda : public pcp::pmda {
 
@@ -664,5 +665,10 @@ protected:
 
 int main(int argc, char *argv[])
 {
-    return pcp::pmda::run_daemon<QpidPmda>(argc, argv);
+    using namespace qpid::log;
+    Logger::instance().format(0); // Don't log timestamps, etc, since pcp will.
+    Logger::instance().output(std::auto_ptr<Logger::Output>(new QpidLogger));
+    const int result = pcp::pmda::run_daemon<QpidPmda>(argc, argv);
+    Logger::instance().clear();
+    return result;
 }
