@@ -3,6 +3,7 @@
 ### 0.1.1 (2014-02-16)
 Features:
 - NSS CLI support ([#5](../../issues/5))
+- Qpid log output ([#7](../../issues/7))
 
 Bug fixes:
 - `--transport` command line option implemented ([39bb3d7](
