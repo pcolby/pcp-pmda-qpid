@@ -1,6 +1,6 @@
 ## Qpid PMDA Changelog
 
-### 0.1.1 (_unreleased_)
+### 0.1.1 (2014-02-16)
 Features:
 - NSS CLI support ([#5](../../issues/5))
 
