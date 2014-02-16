@@ -19,6 +19,8 @@
 #include <pcp/pmapi.h>
 #include <pcp/impl.h>
 
+#include <boost/algorithm/string/trim.hpp>
+
 void QpidLogger::log(const qpid::log::Statement &statement,
                      const std::string &message)
 {
@@ -32,7 +34,7 @@ void QpidLogger::log(const qpid::log::Statement &statement,
         return;
     }
 
-    __pmNotifyErr(level, "QpidLogger: %s", message.c_str());
+    __pmNotifyErr(level, "QpidLogger: %s", boost::trim_copy(message).c_str());
 }
 
 int QpidLogger::pmNotifyLevel(const qpid::log::Level level)
