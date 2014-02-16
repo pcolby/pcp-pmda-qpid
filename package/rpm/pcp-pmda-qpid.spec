@@ -6,7 +6,7 @@
 
 Summary: PCP PMDA for Qpid
 Name: pcp-pmda-qpid
-Version: 0.1.0
+Version: 0.1.1
 Release: 1%{?dist}
 License: Apache License
 Group: Development/Libraries
@@ -55,5 +55,8 @@ Qpid PMDA using QMFv1.
 %{pcp_pmdas_dir}/qpid-qmf1
 
 %changelog
+* Sun Feb 16 2014 Paul Colby <git@colby.id.au> - 0.1.1-1
+- updated to %{name} 0.1.1.
+
 * Sat Feb 15 2014 Paul Colby <git@colby.id.au> - 0.1.0-1
 - initial %{name} spec file.
