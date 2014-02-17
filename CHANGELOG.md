@@ -1,5 +1,9 @@
 ## Qpid PMDA Changelog
 
+### 0.2.0 (_unreleased_)
+Features:
+- code refactor for combined QMFv1 and QMFv2 support in one binary.
+
 ### 0.1.1 (2014-02-16)
 Features:
 - NSS CLI support ([#5](../../issues/5))
