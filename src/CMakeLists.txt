@@ -2,7 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
-project(pmdaqpid)
+set(PMDA_NAME "qpid")
+
+project(pmda${PMDA_NAME})
 
 # Add a pmdaqpid target.
 add_executable(
@@ -58,3 +60,65 @@ endif ()
 if (HAVE_QMF2)
     message(STATUS "QMF2 support not implemented yet.")
 endif ()
+
+# Generate a basic PMDA registration script.
+file(WRITE Install
+    "# Install the ${PMDA_NAME} PMDA\n\n"
+    ". $PCP_DIR/etc/pcp.env\n"
+    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
+    "iam=${PMDA_NAME}\n"
+    "pmns_name=qpid\n\n"
+    "pmdaSetup\n"
+    "pmdaInstall\n"
+    "exit 0\n"
+)
+
+# Generate a basic PMDA deregistration script.
+file(WRITE Remove
+    "# Remove the ${PMDA_NAME} PMDA\n\n"
+    ". $PCP_DIR/etc/pcp.env\n"
+    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
+    "iam=${PMDA_NAME}\n"
+    "pmns_name=qpid\n\n"
+    "pmdaSetup\n"
+    "pmdaRemove\n"
+    "exit 0\n"
+)
+
+# Detect the PCP_PMDAS_DIR directory.
+find_program(PCP_PMCONFIG_EXECUTABLE NAMES pmconfig)
+if (PCP_PMCONFIG_EXECUTABLE)
+    message(STATUS "Found pmconfig: ${PCP_PMCONFIG_EXECUTABLE}")
+    execute_process(
+        COMMAND ${PCP_PMCONFIG_EXECUTABLE} PCP_PMDAS_DIR
+        OUTPUT_VARIABLE PCP_PMDAS_DIR
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if (PCP_PMDAS_DIR)
+        string(REGEX REPLACE "^PCP_PMDAS_DIR=" "" PCP_PMDAS_DIR ${PCP_PMDAS_DIR})
+        message(STATUS "Found PMDAs directory: ${PCP_PMDAS_DIR}")
+    endif (PCP_PMDAS_DIR)
+endif (PCP_PMCONFIG_EXECUTABLE)
+
+# Create an install target, but only if the PCP_PMDA_DIR directory was detected.
+if (PCP_PMDAS_DIR)
+    # Install the PMDA binary.
+    install(
+        TARGETS ${PROJECT_NAME} DESTINATION ${PCP_PMDAS_DIR}/${PMDA_NAME}
+    )
+    # Export the PMDA's support files (domain, help, pmns, etc).
+    install(
+        CODE "execute_process(
+            COMMAND ${PCP_PMDAS_DIR}/${PMDA_NAME}/${PROJECT_NAME} --export-all
+            WORKING_DIRECTORY ${PCP_PMDAS_DIR}/${PMDA_NAME}
+        )"
+    )
+    # Install the PMDA registration scripts.
+    install(
+        FILES Install Remove DESTINATION ${PCP_PMDAS_DIR}/${PMDA_NAME}
+        PERMISSIONS
+            OWNER_READ OWNER_WRITE OWNER_EXECUTE
+            GROUP_READ GROUP_EXECUTE
+            WORLD_READ WORLD_EXECUTE
+    )
+endif (PCP_PMDAS_DIR)
