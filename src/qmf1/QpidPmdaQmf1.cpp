@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "QpidPmda.h"
+#include "QpidPmdaQmf1.h"
 
 #include <pcp-cpp/atom.hpp>
 #include <pcp-cpp/units.hpp>
@@ -24,7 +24,7 @@
 
 #include "ConsoleUtils.h"
 
-QpidPmda::QpidPmda() : sessionManager(&consoleListener)
+QpidPmdaQmf1::QpidPmdaQmf1() : sessionManager(&consoleListener)
 {
     // Setup our instance domain IDs.  Thses instance domains are empty to
     // begin with - we'll dynamically add to them as Qpid updates arrive.
@@ -33,22 +33,22 @@ QpidPmda::QpidPmda() : sessionManager(&consoleListener)
     system_domain(2);
 }
 
-std::string QpidPmda::get_pmda_name() const
+std::string QpidPmdaQmf1::get_pmda_name() const
 {
     return "qpid";
 }
 
-int QpidPmda::get_default_pmda_domain_number() const
+int QpidPmdaQmf1::get_default_pmda_domain_number() const
 {
     return 124; // Reserved by PCP for Qpid PMDAs.
 }
 
-std::string QpidPmda::get_pmda_version() const
+std::string QpidPmdaQmf1::get_pmda_version() const
 {
     return "0.0.0";
 }
 
-boost::program_options::options_description QpidPmda::get_supported_options() const
+boost::program_options::options_description QpidPmdaQmf1::get_supported_options() const
 {
     using namespace boost::program_options;
     options_description connectionOptions("Broker connection options");
@@ -85,7 +85,7 @@ boost::program_options::options_description QpidPmda::get_supported_options() co
             .add(pcp::pmda::get_supported_options());
 }
 
-boost::program_options::options_description QpidPmda::get_supported_hidden_options() const
+boost::program_options::options_description QpidPmdaQmf1::get_supported_hidden_options() const
 {
     using namespace boost::program_options;
     options_description options;
@@ -94,7 +94,7 @@ boost::program_options::options_description QpidPmda::get_supported_hidden_optio
     return options;
 }
 
-bool QpidPmda::parse_command_line(const int argc, const char * const argv[],
+bool QpidPmdaQmf1::parse_command_line(const int argc, const char * const argv[],
                                           pmdaInterface& interface,
                                           boost::program_options::variables_map &options)
 {
@@ -185,7 +185,7 @@ bool QpidPmda::parse_command_line(const int argc, const char * const argv[],
     return true;
 }
 
-void QpidPmda::initialize_pmda(pmdaInterface &interface)
+void QpidPmdaQmf1::initialize_pmda(pmdaInterface &interface)
 {
     // Setup the QMF console listener.
     for (std::vector<qpid::client::ConnectionSettings>::const_iterator iter = qpidConnectionSettings.begin();
@@ -215,7 +215,7 @@ void QpidPmda::initialize_pmda(pmdaInterface &interface)
     pcp::pmda::initialize_pmda(interface);
 }
 
-pcp::metrics_description QpidPmda::get_supported_metrics()
+pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
 {
     return pcp::metrics_description()
     (0, "broker") // org.apache.qpid.broker::broker::properties
@@ -517,7 +517,7 @@ pcp::metrics_description QpidPmda::get_supported_metrics()
          pcp::units(0,0,0, 0,0,0), &system_domain, "System UUID");
 }
 
-void QpidPmda::begin_fetch_values()
+void QpidPmdaQmf1::begin_fetch_values()
 {
     boost::optional<qpid::console::ObjectId> objectId;
     while ((objectId = consoleListener.getNewObjectId())) {
@@ -562,7 +562,7 @@ void QpidPmda::begin_fetch_values()
     }
 }
 
-pcp::pmda::fetch_value_result QpidPmda::fetch_value(const metric_id &metric)
+pcp::pmda::fetch_value_result QpidPmdaQmf1::fetch_value(const metric_id &metric)
 {
     // Get the metric's instance domain.
     pcp::instance_domain * domain = NULL;

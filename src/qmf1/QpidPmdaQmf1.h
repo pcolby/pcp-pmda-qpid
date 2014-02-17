@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef __QPID_PMDA_QPID_PMDA_H__
-#define __QPID_PMDA_QPID_PMDA_H__
+#ifndef __QPID_PMDA_QMF1_H__
+#define __QPID_PMDA_QMF1_H__
 
 // Since we're potentially including two separate PMDAs (this one, for QMFv1,
 // and another for QMFv2), tell the header-only PMDA++ library to skip defining
@@ -31,10 +31,10 @@
 
 #include "ConsoleListener.h"
 
-class QpidPmda : public pcp::pmda {
+class QpidPmdaQmf1 : public pcp::pmda {
 
 public:
-    QpidPmda();
+    QpidPmdaQmf1();
 
     virtual std::string get_pmda_name() const;
 

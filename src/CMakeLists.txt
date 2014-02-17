@@ -42,10 +42,10 @@ if (HAVE_QMF1)
     # add #define
     add_library(
         ${PROJECT_NAME}-qmf1 STATIC
-        qmf1/QpidPmda.cpp
         qmf1/ConsoleListener.cpp
         qmf1/ConsoleLogger.cpp
         qmf1/ConsoleUtils.cpp
+        qmf1/QpidPmdaQmf1.cpp
     )
     target_link_libraries(
         ${PROJECT_NAME}

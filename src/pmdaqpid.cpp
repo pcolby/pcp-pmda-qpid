@@ -16,7 +16,7 @@
 
 #include "QpidLogger.h"
 
-#include "qmf1/QpidPmda.h"
+#include "qmf1/QpidPmdaQmf1.h"
 
 pcp::pmda * pcp::pmda::instance(NULL);
 
@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     using namespace qpid::log;
     Logger::instance().format(0); // Don't log timestamps, etc, since PCP will.
     Logger::instance().output(std::auto_ptr<Logger::Output>(new QpidLogger));
-    const int result = pcp::pmda::run_daemon<QpidPmda>(argc, argv);
+    const int result = pcp::pmda::run_daemon<QpidPmdaQmf1>(argc, argv);
     Logger::instance().clear();
     return result;
 }
