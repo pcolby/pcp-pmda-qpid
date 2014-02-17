@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef __QPID_PMDA_CONSOLE_UTILS_H__
+#define __QPID_PMDA_CONSOLE_UTILS_H__
+
 #include <qpid/console/ClassKey.h>
 #include <qpid/console/Object.h>
 #include <qpid/console/Schema.h>
@@ -49,3 +52,5 @@ public:
     static std::string toString(const qpid::console::SchemaStatistic &statistic);
 
 };
+
+#endif

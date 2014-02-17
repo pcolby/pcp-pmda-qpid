@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef __QPID_PMDA_CONSOLE_LOGGER_H__
+#define __QPID_PMDA_CONSOLE_LOGGER_H__
+
 #include <qpid/console/ConsoleListener.h>
 
 class ConsoleLogger : public qpid::console::ConsoleListener {
@@ -49,3 +52,5 @@ protected:
     virtual void logSchema(const qpid::console::SchemaClass &schema);
 
 };
+
+#endif

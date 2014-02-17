@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+#ifndef __QPID_PMDA_CONSOLE_LISTENER_H__
+#define __QPID_PMDA_CONSOLE_LISTENER_H__
+
 #include "ConsoleLogger.h"
 
 #include <boost/optional/optional.hpp>
@@ -57,3 +60,5 @@ private:
     boost::mutex newObjectsMutex;
 
 };
+
+#endif
