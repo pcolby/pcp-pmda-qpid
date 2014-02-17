@@ -18,7 +18,7 @@
 #include <pcp-cpp/pmda.hpp>
 #include <pcp-cpp/units.hpp>
 
-class QpidPmda : public pcp::pmda {
+class QpidPmdaQmf2 : public pcp::pmda {
 
 public:
 
@@ -47,8 +47,3 @@ protected:
     }
 
 };
-
-int main(int argc, char *argv[])
-{
-    return pcp::pmda::run_daemon<QpidPmda>(argc, argv);
-}
