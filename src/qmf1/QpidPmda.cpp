@@ -17,14 +17,11 @@
 #include "QpidPmda.h"
 
 #include <pcp-cpp/atom.hpp>
-#include <pcp-cpp/pmda.hpp>
 #include <pcp-cpp/units.hpp>
 
-#include <qpid/console/SessionManager.h>
 #include <qpid/log/Logger.h>
 #include <qpid/Url.h>
 
-#include "ConsoleListener.h"
 #include "ConsoleUtils.h"
 
 QpidPmda::QpidPmda() : sessionManager(&consoleListener)

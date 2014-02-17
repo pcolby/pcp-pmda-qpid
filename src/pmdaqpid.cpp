@@ -16,7 +16,9 @@
 
 #include "QpidLogger.h"
 
-#include "qmf1/QpidPmda.cpp"
+#include "qmf1/QpidPmda.h"
+
+pcp::pmda * pcp::pmda::instance(NULL);
 
 int main(int argc, char *argv[]) {
     using namespace qpid::log;

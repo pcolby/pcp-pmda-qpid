@@ -17,6 +17,12 @@
 #ifndef __QPID_PMDA_QPID_PMDA_H__
 #define __QPID_PMDA_QPID_PMDA_H__
 
+// Since we're potentially including two separate PMDAs (this one, for QMFv1,
+// and another for QMFv2), tell the header-only PMDA++ library to skip defining
+// the static pcp::pmda::instance variable. The main qpidpmda.cpp file will
+// define it once for both PMDA classes.
+#define PCP_CPP_SKIP_PCP_PMDA_INSTANCE_DEFINITION
+
 #include <pcp-cpp/instance_domain.hpp>
 #include <pcp-cpp/pmda.hpp>
 
@@ -24,7 +30,6 @@
 #include <qpid/console/SessionManager.h>
 
 #include "ConsoleListener.h"
-#include "ConsoleUtils.h"
 
 class QpidPmda : public pcp::pmda {
 
