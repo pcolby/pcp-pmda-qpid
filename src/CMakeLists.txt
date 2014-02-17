@@ -13,15 +13,6 @@ add_executable(
     QpidLogger.cpp
 )
 
-find_package(Boost COMPONENTS program_options REQUIRED)
-
-target_link_libraries(
-    ${PROJECT_NAME}
-    ${Boost_LIBRARIES}
-    pcp
-    pcp_pmda
-)
-
 # Detect which QMF libraries are available.
 find_library(HAVE_QMF1 qmfconsole)
 find_library(HAVE_QMF2 qmf2)
@@ -60,6 +51,13 @@ endif ()
 if (HAVE_QMF2)
     message(STATUS "QMF2 support not implemented yet.")
 endif ()
+
+# Add Boost to the build.
+find_package(Boost COMPONENTS program_options REQUIRED)
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+
+# Add PCP libraries to the build.
+target_link_libraries(${PROJECT_NAME} pcp pcp_pmda)
 
 # Generate a basic PMDA registration script.
 file(WRITE Install
