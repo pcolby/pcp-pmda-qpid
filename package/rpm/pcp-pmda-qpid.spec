@@ -6,17 +6,22 @@
 
 Summary: PCP PMDA for Qpid
 Name: pcp-pmda-qpid
-Version: 0.1.1
+Version: 0.2.0
 Release: 1%{?dist}
 License: Apache License
 Group: Development/Libraries
 Source: pcp-pmda-qpid-%{version}.tar.gz
 URL: https://github.com/pcolby/pcp-pmda-qpid
 
+Requires: boost-program-options
+Requires: pcp-libs
+Requires: qpid-cpp-client
+Requires: qpid-qmf
+
 BuildRequires: boost >= 1.32
 BuildRequires: cmake >= 2.6
 BuildRequires: pcp-libs-devel
-BuildRequires: pcp-pmda-cpp-devel
+BuildRequires: pcp-pmda-cpp-devel >= 0.3.3
 BuildRequires: qpid-cpp-client-devel
 BuildRequires: qpid-qmf-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -40,21 +45,13 @@ to Performance Co-Pilot (PCP) using the PMDA++ library.
 %clean
 %{__rm} -rf %{buildroot}
 
-%package qmf1
-Summary: Qpid PMDA using QMFv1
-Group: Development/Libraries
-Requires: boost-program-options
-Requires: pcp-libs
-Requires: qpid-cpp-client
-Requires: qpid-qmf
-
-%description qmf1
-Qpid PMDA using QMFv1.
-
-%files qmf1
-%{pcp_pmdas_dir}/qpid-qmf1
+%files
+%{pcp_pmdas_dir}/qpid
 
 %changelog
+* Tue Feb 18 2014 Paul Colby <git@colby.id.au> - 0.2.0-1
+- updated to %{name} 0.2.0.
+
 * Sun Feb 16 2014 Paul Colby <git@colby.id.au> - 0.1.1-1
 - updated to %{name} 0.1.1.
 
