@@ -12,7 +12,7 @@ To build the `pcp-pmda-qpid` RPMS:
       qpid-cpp-client qpid-cpp-client-devel qpid-qmf qpid-qmf-devel
   ```
   * Note, `pcp-pmda-cpp-devel` is not a standard Fedora / Red Hat package.  If
-    its not already within your own yum repos, you build it spearately via
+    its not already within your own yum repos, you can build it spearately via
     [these instructions](https://github.com/pcolby/pcp-pmda-cpp/tree/master/package/rpm).
 
 3. Download the source archive:
