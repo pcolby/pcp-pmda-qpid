@@ -1,0 +1,11 @@
+# Install the ${PMDA_NAME} PMDA
+
+. $PCP_DIR/etc/pcp.env
+. $PCP_SHARE_DIR/lib/pmdaproc.sh
+
+iam=qpid
+pmns_name=${PMDA_NAME}
+
+pmdaSetup
+pmdaInstall
+exit 0

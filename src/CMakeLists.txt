@@ -59,30 +59,6 @@ target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 # Add PCP libraries to the build.
 target_link_libraries(${PROJECT_NAME} pcp pcp_pmda)
 
-# Generate a basic PMDA registration script.
-file(WRITE Install
-    "# Install the ${PMDA_NAME} PMDA\n\n"
-    ". $PCP_DIR/etc/pcp.env\n"
-    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
-    "iam=${PMDA_NAME}\n"
-    "pmns_name=qpid\n\n"
-    "pmdaSetup\n"
-    "pmdaInstall\n"
-    "exit 0\n"
-)
-
-# Generate a basic PMDA deregistration script.
-file(WRITE Remove
-    "# Remove the ${PMDA_NAME} PMDA\n\n"
-    ". $PCP_DIR/etc/pcp.env\n"
-    ". $PCP_SHARE_DIR/lib/pmdaproc.sh\n\n"
-    "iam=${PMDA_NAME}\n"
-    "pmns_name=qpid\n\n"
-    "pmdaSetup\n"
-    "pmdaRemove\n"
-    "exit 0\n"
-)
-
 # Detect the PCP_PMDAS_DIR directory.
 find_program(PCP_PMCONFIG_EXECUTABLE NAMES pmconfig)
 if (PCP_PMCONFIG_EXECUTABLE)
@@ -99,6 +75,8 @@ if (PCP_PMCONFIG_EXECUTABLE)
 endif (PCP_PMCONFIG_EXECUTABLE)
 
 # Create an install target, but only if the PCP_PMDA_DIR directory was detected.
+configure_file(Install.in ${CMAKE_CURRENT_SOURCE_DIR}/Install)
+configure_file(Remove.in  ${CMAKE_CURRENT_SOURCE_DIR}/Remove)
 if (PCP_PMDAS_DIR)
     # Install the PMDA binary.
     install(
