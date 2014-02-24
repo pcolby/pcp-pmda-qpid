@@ -103,7 +103,7 @@ void ConsoleLogger::delAgent (const qpid::console::Agent &agent)
 }
 
 /**
- * @brief Invoked when an object's propetied ared updated.
+ * @brief Invoked when an object's propeties are updated.
  *
  * @param broker Broker advertising the updated object.
  * @param object Updated QMF object.

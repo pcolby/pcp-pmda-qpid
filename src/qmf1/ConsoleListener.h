@@ -58,7 +58,7 @@ public:
     virtual void objectStats(qpid::console::Broker &broker, qpid::console::Object &object);
 
 protected:
-    bool includeAutoDelete;
+    bool includeAutoDelete; ///< Whether or not to include auto-delete objects.
 
     virtual bool isAutoDelete(const qpid::console::Object &object);
 
