@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Declares the ConsoleLogger class.
+ */
+
 #ifndef __QPID_PMDA_CONSOLE_LOGGER_H__
 #define __QPID_PMDA_CONSOLE_LOGGER_H__
 

@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Declares the ConsoleUtils class.
+ */
+
 #ifndef __QPID_PMDA_CONSOLE_UTILS_H__
 #define __QPID_PMDA_CONSOLE_UTILS_H__
 

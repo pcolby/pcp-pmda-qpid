@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the Qpid PMDA entry point.
+ */
+
 #include "QpidLogger.h"
 
 #include "qmf1/QpidPmdaQmf1.h"

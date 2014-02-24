@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the ConsoleLogger class.
+ */
+
 #include "ConsoleLogger.h"
 
 #include "ConsoleUtils.h"

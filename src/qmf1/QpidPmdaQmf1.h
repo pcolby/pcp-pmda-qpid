@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Declares the QpidPmdaQmf1 class.
+ */
+
 #ifndef __QPID_PMDA_QMF1_H__
 #define __QPID_PMDA_QMF1_H__
 

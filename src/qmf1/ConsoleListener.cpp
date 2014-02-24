@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the ConsoleListener class.
+ */
+
 #include "ConsoleListener.h"
 
 #include "ConsoleUtils.h"

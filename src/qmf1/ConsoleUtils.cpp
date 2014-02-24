@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the ConsoleUtils class.
+ */
+
 #include "ConsoleUtils.h"
 
 #include <qpid/console/Value.h>

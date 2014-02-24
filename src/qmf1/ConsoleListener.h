@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Declares the ConsoleListener class.
+ */
+
 #ifndef __QPID_PMDA_CONSOLE_LISTENER_H__
 #define __QPID_PMDA_CONSOLE_LISTENER_H__
 

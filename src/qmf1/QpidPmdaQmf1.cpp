@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the QpidPmdaQmf1 class.
+ */
+
 #include "QpidPmdaQmf1.h"
 
 #include <pcp-cpp/atom.hpp>
