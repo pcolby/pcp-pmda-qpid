@@ -31,6 +31,9 @@
 
 #include "ConsoleListener.h"
 
+/**
+ * @brief Qpid PMDA using QMF version 1.
+ */
 class QpidPmdaQmf1 : public pcp::pmda {
 
 public:
@@ -43,13 +46,17 @@ public:
     virtual std::string get_pmda_version() const;
 
 protected:
-    bool nonPmdaMode;
+    bool nonPmdaMode; ///< Was "non-pmda" mode requested (on the command line).
+
+    /// A simple vector of QMF console connections to establish.
     std::vector<qpid::client::ConnectionSettings> qpidConnectionSettings;
 
-    pcp::instance_domain broker_domain, queue_domain, system_domain;
+    pcp::instance_domain broker_domain; ///< The "broker" instance domain.
+    pcp::instance_domain queue_domain;  ///< The "queue" instance domain.
+    pcp::instance_domain system_domain; ///< The "system" instance domain.
 
-    ConsoleListener consoleListener;
-    qpid::console::SessionManager sessionManager;
+    ConsoleListener consoleListener;              ///< A QMF console listener.
+    qpid::console::SessionManager sessionManager; ///< A QMF session manager.
 
     virtual boost::program_options::options_description get_supported_options() const;
 

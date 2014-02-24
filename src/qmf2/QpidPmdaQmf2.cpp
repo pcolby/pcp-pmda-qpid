@@ -18,6 +18,11 @@
 #include <pcp-cpp/pmda.hpp>
 #include <pcp-cpp/units.hpp>
 
+/**
+ * @brief Qpid PMDA using QMF version 2.
+ *
+ * @todo Implement this class.
+ */
 class QpidPmdaQmf2 : public pcp::pmda {
 
 public:

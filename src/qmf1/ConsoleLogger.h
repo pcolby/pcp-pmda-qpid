@@ -19,11 +19,20 @@
 
 #include <qpid/console/ConsoleListener.h>
 
+/**
+ * @brief QMF console listener that logs all that it sees.
+ *
+ * This class forms a concrete implementation of the Qpid's abstract
+ * qpid::console::ConsoleListener class.
+ *
+ * Since we're only interested in a small subset of QMF events (for this Qpid
+ * PMDA), this class allows our descendant ConsoleListener class to implement
+ * just the events we care about, leaving this class to provide logging-only
+ * implementations of the abstract event handlers.
+ */
 class ConsoleLogger : public qpid::console::ConsoleListener {
 
 public:
-
-    /* Overrides for qpid::console::ConsoleListener events below here */
 
     virtual void brokerConnected(const qpid::console::Broker &broker);
 

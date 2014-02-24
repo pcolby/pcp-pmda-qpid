@@ -21,6 +21,9 @@
 #include <qpid/console/Object.h>
 #include <qpid/console/Schema.h>
 
+/**
+ * @brief Collecton of utility functions for working with qpid::console classes.
+ */
 class ConsoleUtils {
 
 public:

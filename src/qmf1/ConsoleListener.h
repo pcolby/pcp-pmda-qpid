@@ -24,6 +24,15 @@
 
 #include <queue>
 
+/**
+ * @brief QMF console event listener for our Qpid PMDA.
+ *
+ * This class listens to QMF console events to build and maintain a list of QMF
+ * object properties and statistics.
+ *
+ * Currently this class only tracks objects of type listes as support by the
+ * isSupported function - that is, brokers, queues and systems.
+ */
 class ConsoleListener : public ConsoleLogger {
 
 public:
@@ -51,13 +60,17 @@ protected:
     virtual bool isSupported(const qpid::console::ClassKey &classKey);
 
 private:
+    /// A simple map of QMF object IDs to QMF objects.
     typedef std::map<qpid::console::ObjectId, qpid::console::Object> ObjectMap;
 
-    ObjectMap props, stats;
-    boost::mutex propsMutex, statsMutex;
+    ObjectMap props;         ///< Known QMF object properties.
+    ObjectMap stats;         ///< Known QMF object statistics.
+    boost::mutex propsMutex; ///< Protects access to props.
+    boost::mutex statsMutex; ///< Protects access to stats.
 
+    /// IDs of objects not yet reported via getNewObjectId.
     std::queue<qpid::console::ObjectId> newObjects;
-    boost::mutex newObjectsMutex;
+    boost::mutex newObjectsMutex; ///< Protects access to newObjects.
 
 };
 
