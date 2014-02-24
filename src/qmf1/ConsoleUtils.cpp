@@ -25,6 +25,21 @@
 
 #include <boost/lexical_cast.hpp>
 
+/**
+ * @brief Get a standardised name for a QMF object.
+ *
+ * This function checks a QMF object for an appropriate "name" attribute, and if
+ * found, returns it verbatim.  If the object has no "name" attribute, and
+ * allowNodeName is \c true, and the object has a "nodeName" attribute, then
+ * that attribute's value will be returned verbatim.  Otherwise, and empty
+ * string is returned.
+ *
+ * @param object        Object to fetch the name of.
+ * @param allowNodeName If \c true, and \a object has no name attribute, the
+ *                      nodeName attribute will be considered also.
+ *
+ * @return A name for \a object, or an empty string if no name could be found.
+ */
 std::string ConsoleUtils::getName(const qpid::console::Object &object,
                                   const bool allowNodeName)
 {
@@ -36,11 +51,25 @@ std::string ConsoleUtils::getName(const qpid::console::Object &object,
     return (name == attributes.end()) ? std::string() : name->second->asString();
 }
 
+/**
+ * @brief Get the schema type of a QMF object.
+ *
+ * @param object QMF object to fetch the type of.
+ *
+ * @return One of the ConsoleUtils::ObjectSchemaType enumeration values.
+ */
 ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::Object &object)
 {
     return getType(object.getClassKey());
 }
 
+/**
+ * @brief Get the schema type of a QMF class key.
+ *
+ * @param classKey QMF class key to fetch the type of.
+ *
+ * @return One of the ConsoleUtils::ObjectSchemaType enumeration values.
+ */
 ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassKey &classKey)
 {
     if (classKey.getPackageName() == "org.apache.qpid.broker") {
@@ -52,6 +81,15 @@ ConsoleUtils::ObjectSchemaType ConsoleUtils::getType(const qpid::console::ClassK
     return Other;
 }
 
+/**
+ * @brief Convert a QMF type code to a human-readable string.
+ *
+ * This function is only used to make log messages more friendly.
+ *
+ * @param typeCode QMF type code to convert to string.
+ *
+ * @return A human-readable version of \a typeCode.
+ */
 std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
 {
     // See Qpid's cpp/include/qmf/engine/Typecode.h
@@ -83,11 +121,27 @@ std::string ConsoleUtils::qmfTypeCodeToString(const uint8_t typeCode)
     }
 }
 
+/**
+ * @brief Convert a QMF class to a canonical string for logging.
+ *
+ * @param classKey QMF class key to convert to string.
+ *
+ * @return String representation of \a classKey, suitable for logging.
+ */
 std::string ConsoleUtils::toString(const qpid::console::ClassKey &classKey)
 {
     return classKey.getPackageName() + ':' + classKey.getClassName();
 }
 
+/**
+ * @brief Convert a QMF object to a canonical string for logging.
+ *
+ * @param object             QMF object to conver to string.
+ * @param includePackageName If \c true, the object's QMF package name will be
+ *                           included in the returned string.
+ *
+ * @return String representation of \a object, suitable for logging.
+ */
 std::string ConsoleUtils::toString(const qpid::console::Object &object,
                                    bool includePackageName)
 {
@@ -96,19 +150,40 @@ std::string ConsoleUtils::toString(const qpid::console::Object &object,
            " '" + getName(object) + "' (" + toString(object.getObjectId()) + ')';
 }
 
+/**
+ * @brief Convert a QMF object ID to a canonical string for logging.
+ *
+ * @param id QMF object ID to convert to string.
+ *
+ * @return String representation of \a id, suitable for logging.
+ */
 std::string ConsoleUtils::toString(const qpid::console::ObjectId &id)
 {
-    std::ostringstream stream;
-    stream << id;
+    std::ostringstream stream; // Take advantage of the qpid::console::ObjectId
+    stream << id;              // class' built-in stream operator.
     return stream.str();
 }
 
+/**
+ * @brief Convert a QMF property schema to a canonical string for logging.
+ *
+ * @param property QMF property schema to convert to string.
+ *
+ * @return String representation of \a property, suitable for logging.
+ */
 std::string ConsoleUtils::toString(const qpid::console::SchemaProperty &property)
 {
     return property.name + ':' + qmfTypeCodeToString(property.typeCode) + ':' +
            property.unit + ':' + property.desc;
 }
 
+/**
+ * @brief Convert a QMF statistic schema to a canonical string for logging.
+ *
+ * @param statistic QMF statistic schema to convert to string.
+ *
+ * @return String representation of \a statistic, suitable for logging.
+ */
 std::string ConsoleUtils::toString(const qpid::console::SchemaStatistic &statistic)
 {
     return statistic.name + ':' + qmfTypeCodeToString(statistic.typeCode) + ':' +
