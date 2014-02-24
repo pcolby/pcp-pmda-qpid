@@ -29,6 +29,9 @@
 
 #include "ConsoleUtils.h"
 
+/**
+ * @brief Default constructor.
+ */
 QpidPmdaQmf1::QpidPmdaQmf1() : sessionManager(&consoleListener)
 {
     // Setup our instance domain IDs.  Thses instance domains are empty to
@@ -38,21 +41,51 @@ QpidPmdaQmf1::QpidPmdaQmf1() : sessionManager(&consoleListener)
     system_domain(2);
 }
 
+/**
+ * @brief Get this PMDA's name.
+ *
+ * This concrete implementaton simply returns "qpid".
+ *
+ * @return This PMDA's name.
+ */
 std::string QpidPmdaQmf1::get_pmda_name() const
 {
     return "qpid";
 }
 
+/**
+ * @brief Get this PMDA's default performance metrics domain number.
+ *
+ * This concrete implementation simply returns 124, which is the domain number
+ * assigned by the PCP project for Qpid PMDAs.
+ *
+ * @return This PMDA's default domain number.
+ *
+ * @see http://oss.sgi.com/cgi-bin/gitweb.cgi?p=pcp/pcp.git;a=blob;f=src/pmns/stdpmid.pcp
+ */
 int QpidPmdaQmf1::get_default_pmda_domain_number() const
 {
-    return 124; // Reserved by PCP for Qpid PMDAs.
+    return 124; ///< Reserved by PCP for Qpid PMDAs.
 }
 
+/**
+ * @brief Get this PMDA's version string.
+ *
+ * @return This PMDA's version string.
+ */
 std::string QpidPmdaQmf1::get_pmda_version() const
 {
-    return "0.0.0";
+    return "0.2.0";
 }
 
+/**
+ * @brief Get a list of command line options supported by this PMDA.
+ *
+ * This override returns the complete list of options supported by the base
+ * implementation, and extends it by adding a number of Qpid-specific options.
+ *
+ * @return A list of command line options supported by this PMDA.
+ */
 boost::program_options::options_description QpidPmdaQmf1::get_supported_options() const
 {
     using namespace boost::program_options;
@@ -90,6 +123,14 @@ boost::program_options::options_description QpidPmdaQmf1::get_supported_options(
             .add(pcp::pmda::get_supported_options());
 }
 
+/**
+ * @brief Get a list of hidden supported command line options.
+ *
+ * This override returns a single hidden "--no-pmda" command line option, that
+ * we use for debugging / development of the Qpid interfaces only.
+ *
+ * @return A list of command line options to support, but not advertise.
+ */
 boost::program_options::options_description QpidPmdaQmf1::get_supported_hidden_options() const
 {
     using namespace boost::program_options;
@@ -99,6 +140,25 @@ boost::program_options::options_description QpidPmdaQmf1::get_supported_hidden_o
     return options;
 }
 
+/**
+ * @brief Parse command line options.
+ *
+ * This override extends the base implementation to include the handling of our
+ * own custom command line options adding in our get_supported_options and
+ * get_supported_hidden_options overrides.
+ *
+ * @param argc      Argument count.
+ * @param argv      Argumnet vector.
+ * @param interface PMDA interface.
+ * @param options   The parsed program options.
+ *
+ * @return \c true if the caller should continue to run the PMDA, else \c false.
+ *
+ * @throw pcp::exception On error.
+ *
+ * @see get_supported_options
+ * @see get_supported_hidden_options
+ */
 bool QpidPmdaQmf1::parse_command_line(const int argc, const char * const argv[],
                                           pmdaInterface& interface,
                                           boost::program_options::variables_map &options)
@@ -190,6 +250,11 @@ bool QpidPmdaQmf1::parse_command_line(const int argc, const char * const argv[],
     return true;
 }
 
+/**
+ * @brief Initialise this PMDA.
+ *
+ * @param interface PMDA interface to initialise.
+ */
 void QpidPmdaQmf1::initialize_pmda(pmdaInterface &interface)
 {
     // Setup the QMF console listener.
@@ -220,6 +285,21 @@ void QpidPmdaQmf1::initialize_pmda(pmdaInterface &interface)
     pcp::pmda::initialize_pmda(interface);
 }
 
+/**
+ * @brief Get descriptions of all of the metrics supported by this PMDA.
+ *
+ * Here we setup a collection of metrics such that:
+ *  * odd clusters contain QMF properties;
+ *  * even clusters contain QMF statistics;
+ *  * QMF object types' properties and statistics are contains in consecutive
+ *    cluster.
+ *
+ * This arrangement makes it very easy for the fetch_value function to know
+ * whether to fetch properties or statistics objects according to the cluster
+ * index.
+ *
+ * @return Descriptions of all of the metrics supported by this PMDA.
+ */
 pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
 {
     return pcp::metrics_description()
@@ -522,15 +602,28 @@ pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
          pcp::units(0,0,0, 0,0,0), &system_domain, "System UUID");
 }
 
+/**
+ * @brief Begin fetching values.
+ *
+ * This override checks to see if any new QMF objects have been discovered (via
+ * ConsoleListener::getNewObjectId), and if so, registers any such new objects
+ * via PCP's pmdaCacheStoreKey function.
+ *
+ * @see ConsoleListener::getNewObjectId
+ * @see pmdaCacheStoreKey
+ */
 void QpidPmdaQmf1::begin_fetch_values()
 {
+    // For all new QMF object IDs (if any)
     boost::optional<qpid::console::ObjectId> objectId;
     while ((objectId = consoleListener.getNewObjectId())) {
+        // Get the new object's properties.
         const boost::optional<qpid::console::Object> props = consoleListener.getProps(*objectId);
         if (!props) {
             __pmNotifyErr(LOG_NOTICE, "No properties found for object %s",
                           ConsoleUtils::toString(*objectId).c_str());
         } else {
+            // Determine which instance domain the new object is an instance of.
             const ConsoleUtils::ObjectSchemaType type = ConsoleUtils::getType(*props);
             pcp::instance_domain * domain = NULL;
             switch (type) {
@@ -548,12 +641,16 @@ void QpidPmdaQmf1::begin_fetch_values()
                                   ConsoleUtils::toString(*objectId).c_str());
                     return;
             }
+
+            // Get a canonical name for the new object.
             const std::string instanceName = ConsoleUtils::getName(*props);
             if (instanceName.empty()) {
                 __pmNotifyErr(LOG_WARNING, "%s has no name attribute",
                               ConsoleUtils::toString(*objectId).c_str());
                 return;
             }
+
+            // Get a PCP instance ID by storing the new object in PCP's cache.
             const int instanceId = pmdaCacheStoreKey(
                 *domain, PMDA_CACHE_ADD, instanceName.c_str(),
                  0, NULL, new qpid::console::ObjectId(*objectId));
@@ -562,11 +659,23 @@ void QpidPmdaQmf1::begin_fetch_values()
                               ConsoleUtils::toString(*objectId).c_str(),
                               pmErrStr(instanceId));
             }
+
+            // Add this new instance to the selected instance domain.
             (*domain)(instanceId, instanceName);
         }
     }
 }
 
+/**
+ * @brief Fetch an individual metric value.
+ *
+ * @param metric The metric to fetch the value of.
+ *
+ * @throw pcp::exception on error, or if the requested metric is not
+ *                       currently available.
+ *
+ * @return The value of the requested metric.
+ */
 pcp::pmda::fetch_value_result QpidPmdaQmf1::fetch_value(const metric_id &metric)
 {
     // Get the metric's instance domain.
