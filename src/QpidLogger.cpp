@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Defines the QpidLogger class.
+ */
+
 #include "QpidLogger.h"
 
 #include <pcp/pmapi.h>
@@ -21,6 +26,12 @@
 
 #include <boost/algorithm/string/trim.hpp>
 
+/**
+ * @brief Log a Qpid logging statement.
+ *
+ * @param statement Qpid logging statement detatils.
+ * @param message   Qpid logging message.
+ */
 void QpidLogger::log(const qpid::log::Statement &statement,
                      const std::string &message)
 {
@@ -37,6 +48,13 @@ void QpidLogger::log(const qpid::log::Statement &statement,
     __pmNotifyErr(level, "QpidLogger: %s", boost::trim_copy(message).c_str());
 }
 
+/**
+ * @brief Convert a Qpid log level to a PCP notification level.
+ *
+ * @param level Qpid log level.
+ *
+ * @return PCP notification level equivalent to \a level.
+ */
 int QpidLogger::pmNotifyLevel(const qpid::log::Level level)
 {
     switch (level) {

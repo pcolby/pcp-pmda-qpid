@@ -14,8 +14,22 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ * @brief Declares the QpidLogger class.
+ */
+
+#ifndef __QPID_PMDA_QPID_LOGGER_H__
+#define __QPID_PMDA_QPID_LOGGER_H__
+
 #include <qpid/log/Logger.h>
 
+/**
+ * @brief Qpid logging output sink.
+ *
+ * This implements the qpid::log::Logger::Output sink interface, to log all Qpid
+ * log statements via PCP's __pmNotifyErr function.
+ */
 class QpidLogger : public qpid::log::Logger::Output {
 
 public:
@@ -28,3 +42,5 @@ protected:
     static int pmNotifyLevel(const qpid::log::Level level);
 
 };
+
+#endif

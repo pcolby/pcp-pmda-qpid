@@ -18,8 +18,17 @@
 
 #include "qmf1/QpidPmdaQmf1.h"
 
+/// Single shared instance for both QMFv1 and QMFv2 PMDAs.
 pcp::pmda * pcp::pmda::instance(NULL);
 
+/**
+ * @brief Qpid PMDA main entry point.
+ *
+ * @param argc Argument count.
+ * @param argv Argument vector.
+ *
+ * @return EXIT_SUCCESS on success, EXIT_FAILURE on error.
+ */
 int main(int argc, char *argv[]) {
     using namespace qpid::log;
     Logger::instance().format(0); // Don't log timestamps, etc, since PCP will.
