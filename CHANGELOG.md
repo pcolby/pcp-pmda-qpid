@@ -1,6 +1,6 @@
 ## Qpid PMDA Changelog
 
-### 0.2.1 (_unreleased_)
+### 0.2.1 (2014-03-05)
 Features:
 - extensive code documentation
 

@@ -6,7 +6,7 @@
 
 Summary: PCP PMDA for Qpid
 Name: pcp-pmda-qpid
-Version: 0.2.0
+Version: 0.2.1
 Release: 1%{?dist}
 License: Apache License
 Group: Development/Libraries
@@ -49,6 +49,9 @@ to Performance Co-Pilot (PCP) using the PMDA++ library.
 %{pcp_pmdas_dir}/qpid
 
 %changelog
+* Wed Mar 05 2014 Paul Colby <git@colby.id.au> - 0.2.1-1
+- updated to %{name} 0.2.1.
+
 * Tue Feb 18 2014 Paul Colby <git@colby.id.au> - 0.2.0-1
 - updated to %{name} 0.2.0.
 
