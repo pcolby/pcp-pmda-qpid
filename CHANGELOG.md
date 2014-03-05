@@ -1,5 +1,12 @@
 ## Qpid PMDA Changelog
 
+### 0.2.1 (_unreleased_)
+Features:
+- extensive code documentation
+
+Bug fixes:
+- memory leak fix ([#9](../../issues/9))
+
 ### 0.2.0 (2014-02-18)
 Features:
 - code refactor for combined QMFv1 and QMFv2 support in one binary.
