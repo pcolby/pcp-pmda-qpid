@@ -203,6 +203,7 @@ void ConsoleListener::objectStats(qpid::console::Broker &broker,
                 __pmNotifyErr(LOG_DEBUG, "ignoring statistics for %s since we have no properties",
                               ConsoleUtils::toString(object).c_str());
             }
+            return;
         } else if (isAutoDelete(iter->second)) {
             return;
         }
