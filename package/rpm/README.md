@@ -34,5 +34,5 @@ To build the `pcp-pmda-qpid` RPMS:
   ```
 
 This will produce the following RPMs:
-* `pcp-pmda-qpid-debuginfo` - debug info for the `pcp-pmda-qpid-*` packages.
-* `pcp-pmda-qpid-qmf1` - QMFv1 version of the Qpid PMDA.
+* `pcp-pmda-qpid` - Qpid PMDA binary, and support files.
+* `pcp-pmda-qpid-debuginfo` - debug info for the `pcp-pmda-qpid` package.
