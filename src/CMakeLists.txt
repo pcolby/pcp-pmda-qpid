@@ -92,7 +92,7 @@ if (PCP_PMDAS_DIR)
                 RESULT_VARIABLE export_result
             )
             if (NOT \${export_result} EQUAL 0)
-                message(FATAL_ERROR FATAL_ERROR, \" Failed to export PMDA support files: \${export_result}\")
+                message(FATAL_ERROR \"Failed to export PMDA support files: \${export_result}\")
             endif ()
         "
     )
