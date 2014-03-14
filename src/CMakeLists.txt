@@ -84,10 +84,17 @@ if (PCP_PMDAS_DIR)
     )
     # Export the PMDA's support files (domain, help, pmns, etc).
     install(
-        CODE "execute_process(
-            COMMAND ${PCP_PMDAS_DIR}/${PMDA_NAME}/${PROJECT_NAME} --export-all
-            WORKING_DIRECTORY ${PCP_PMDAS_DIR}/${PMDA_NAME}
-        )"
+        CODE "
+            message(\"-- Exporting: \$ENV{DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}/{domain.h,help,pmns,root}\")
+            execute_process(
+                COMMAND \$ENV{DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}/${PROJECT_NAME} --export-all
+                WORKING_DIRECTORY \$ENV{DESTDIR}${DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}
+                RESULT_VARIABLE export_result
+            )
+            if (NOT \${export_result} EQUAL 0)
+                message(FATAL_ERROR FATAL_ERROR, \" Failed to export PMDA support files: \${export_result}\")
+            endif ()
+        "
     )
     # Install the PMDA registration scripts.
     install(
