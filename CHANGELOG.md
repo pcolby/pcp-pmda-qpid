@@ -1,5 +1,9 @@
 ## Qpid PMDA Changelog
 
+### 0.2.2 (_unreleased_)
+Bug fixes:
+- `DESTDIR` support for exported files ([#5](../../issues/8))
+
 ### 0.2.1 (2014-03-05)
 Features:
 - extensive code documentation
