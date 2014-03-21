@@ -441,20 +441,24 @@ pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
          "Total time the broker has been running")
     (2, "queue") // org.apache.qpid.broker::queue::properties
         (0, "altExchange", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain,
+         "Exchange name for unroutable messages")
         (1, "arguments", pcp::type<std::string>(), PM_SEM_DISCRETE,
          pcp::units(0,0,0, 0,0,0), &queue_domain,
          "Arguments supplied in queue.declare")
         (2, "autoDelete", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain,
+         "Is the queue set to be automatically deleted")
         (3, "durable", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain,
+         "Is the queue to be maintained between broker restarts")
         (4, "exclusive", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain,
+         "Is the queue exclusive to a session")
         (5, "name", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain, "Queue name")
         (6, "vhostRef", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &queue_domain)
+         pcp::units(0,0,0, 0,0,0), &queue_domain, "Virtual host ID")
     (3, "queue") // org.apache.qpid.broker::queue::statistics
         (0, "acquires", pcp::type<uint64_t>(), PM_SEM_COUNTER,
          pcp::units(0,0,1, 0,0,PM_COUNT_ONE), &queue_domain,
@@ -593,7 +597,7 @@ pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
         (1, "nodeName", pcp::type<std::string>(), PM_SEM_DISCRETE,
          pcp::units(0,0,0, 0,0,0), &system_domain, "Node name")
         (2, "machine", pcp::type<std::string>(), PM_SEM_DISCRETE,
-         pcp::units(0,0,0, 0,0,0), &system_domain)
+         pcp::units(0,0,0, 0,0,0), &system_domain, "Machine type")
         (3, "release", pcp::type<std::string>(), PM_SEM_DISCRETE,
          pcp::units(0,0,0, 0,0,0), &system_domain, "System release")
         (4, "version", pcp::type<std::string>(), PM_SEM_DISCRETE,
