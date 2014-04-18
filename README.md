@@ -1,6 +1,8 @@
 # Qpid PMDA
-[![Build Status](https://travis-ci.org/pcolby/pcp-pmda-qpid.svg?branch=master)](https://travis-ci.org/pcolby/pcp-pmda-qpid)
-[![GitHub version](https://badge.fury.io/gh/pcolby%2Fpcp-pmda-qpid.svg)](https://github.com/pcolby/pcp-pmda-qpid/releases/latest)
+[![Build Status](http://img.shields.io/travis/pcolby/pcp-pmda-qpid.svg)](https://travis-ci.org/pcolby/pcp-pmda-qpid)
+[![Github Release](http://img.shields.io/github/release/pcolby/pcp-pmda-qpid.svg)](https://github.com/pcolby/pcp-pmda-qpid/releases/latest)
+[![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
+
 
 Qpid PMDA is a free, open source, [PCP](http://oss.sgi.com/projects/pcp/
 "Performance Co-Pilot") Performance Metrics Domain Agent for [Apache Qpid](
