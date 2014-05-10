@@ -1,6 +1,6 @@
 ## Qpid PMDA Changelog
 
-### 0.2.3 (_unreleased_)
+### 0.2.3 (2014-05-10)
 Bug fixes:
 - verbose metrics descriptions fallback ([#19](../../issues/19))
 
