@@ -59,20 +59,27 @@ target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 # Add PCP libraries to the build.
 target_link_libraries(${PROJECT_NAME} pcp pcp_pmda)
 
-# Detect the PCP_PMDAS_DIR directory.
+# Detect the PCP environment.
 find_program(PCP_PMCONFIG_EXECUTABLE NAMES pmconfig)
 if (PCP_PMCONFIG_EXECUTABLE)
     message(STATUS "Found pmconfig: ${PCP_PMCONFIG_EXECUTABLE}")
     execute_process(
-        COMMAND ${PCP_PMCONFIG_EXECUTABLE} PCP_PMDAS_DIR
-        OUTPUT_VARIABLE PCP_PMDAS_DIR
+        COMMAND ${PCP_PMCONFIG_EXECUTABLE} PCP_BINADM_DIR PCP_PMDAS_DIR
+        OUTPUT_VARIABLE PCP_PMCONFIG_OUTPUT
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
-    if (PCP_PMDAS_DIR)
-        string(REGEX REPLACE "^PCP_PMDAS_DIR=" "" PCP_PMDAS_DIR ${PCP_PMDAS_DIR})
-        message(STATUS "Found PMDAs directory: ${PCP_PMDAS_DIR}")
-    endif (PCP_PMDAS_DIR)
-endif (PCP_PMCONFIG_EXECUTABLE)
+    STRING(REPLACE "\n" ";" PCP_PMCONFIG_OUTPUT ${PCP_PMCONFIG_OUTPUT})
+    foreach (PCP_PMCONFIG_LINE ${PCP_PMCONFIG_OUTPUT})
+        string(REGEX REPLACE "=.*$" "" PCP_PMCONFIG_NAME  ${PCP_PMCONFIG_LINE})
+        string(REGEX REPLACE "^[A-Z_]+=" "" PCP_PMCONFIG_VALUE ${PCP_PMCONFIG_LINE})
+        set(${PCP_PMCONFIG_NAME} ${PCP_PMCONFIG_VALUE})
+        message(STATUS "  ${PCP_PMCONFIG_NAME}: ${${PCP_PMCONFIG_NAME}}")
+    endforeach ()
+endif ()
+find_program(PCP_NEWHELP_EXECUTABLE NAMES newhelp HINTS ${PCP_BINADM_DIR})
+if (PCP_NEWHELP_EXECUTABLE)
+    message(STATUS "Found newhelp: ${PCP_NEWHELP_EXECUTABLE}")
+endif ()
 
 # Create an install target, but only if the PCP_PMDA_DIR directory was detected.
 configure_file(Install.in ${CMAKE_CURRENT_SOURCE_DIR}/Install)
@@ -93,6 +100,17 @@ if (PCP_PMDAS_DIR)
             )
             if (NOT \${export_result} EQUAL 0)
                 message(FATAL_ERROR \"Failed to export PMDA support files: \${export_result}\")
+            endif ()
+            if (EXISTS ${PCP_NEWHELP_EXECUTABLE})
+                message(\"-- Generating: \$ENV{DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}/help.{dir,pag}\")
+                execute_process(
+                    COMMAND ${PCP_NEWHELP_EXECUTABLE} help
+                    WORKING_DIRECTORY \$ENV{DESTDIR}${DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}
+                    RESULT_VARIABLE export_result
+                )
+                if (NOT \${export_result} EQUAL 0)
+                    message(FATAL_ERROR \"Failed to generate help database: \${export_result}\")
+                endif ()
             endif ()
         "
     )
