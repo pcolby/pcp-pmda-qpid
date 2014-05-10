@@ -21,7 +21,7 @@ Requires: qpid-qmf
 BuildRequires: boost >= 1.32
 BuildRequires: cmake >= 2.6
 BuildRequires: pcp-libs-devel
-BuildRequires: pcp-pmda-cpp-devel >= 0.3.3
+BuildRequires: pcp-pmda-cpp-devel >= 0.3.4
 BuildRequires: qpid-cpp-client-devel
 BuildRequires: qpid-qmf-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
