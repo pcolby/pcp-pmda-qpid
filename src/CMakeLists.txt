@@ -104,7 +104,7 @@ if (PCP_PMDAS_DIR)
             if (EXISTS ${PCP_NEWHELP_EXECUTABLE})
                 message(\"-- Generating: \$ENV{DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}/help.{dir,pag}\")
                 execute_process(
-                    COMMAND ${PCP_NEWHELP_EXECUTABLE} help
+                    COMMAND ${PCP_NEWHELP_EXECUTABLE} -n root help
                     WORKING_DIRECTORY \$ENV{DESTDIR}${DESTDIR}${PCP_PMDAS_DIR}/${PMDA_NAME}
                     RESULT_VARIABLE export_result
                 )
