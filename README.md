@@ -20,7 +20,7 @@ Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMF2 | Infrastructure
 ## Requirements
 
 * [Boost C++ Libraries](http://www.boost.org/) 1.32+
-* [PMDA++](https://github.com/pcolby/pcp-pmda-cpp) 0.3.3+
+* [PMDA++](https://github.com/pcolby/pcp-pmda-cpp) 0.3.4+
 * [Apache Qpid](http://qpid.apache.org/)
 
 ## Building & Installing
