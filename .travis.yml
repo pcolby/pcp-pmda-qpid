@@ -25,5 +25,5 @@ before_script:
 
 script:
   - pushd build
-  - cmake .. && make
+  - cmake .. && make && sudo make install
   - popd
