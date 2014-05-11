@@ -22,6 +22,7 @@
 #include "QpidPmdaQmf1.h"
 
 #include <pcp-cpp/atom.hpp>
+#include <pcp-cpp/cache.hpp>
 #include <pcp-cpp/units.hpp>
 
 #include <qpid/log/Logger.h>
@@ -611,7 +612,7 @@ pcp::metrics_description QpidPmdaQmf1::get_supported_metrics()
  *
  * This override checks to see if any new QMF objects have been discovered (via
  * ConsoleListener::getNewObjectId), and if so, registers any such new objects
- * via PCP's pmdaCacheStoreKey function.
+ * via PCP's cache.
  *
  * @see ConsoleListener::getNewObjectId
  * @see pmdaCacheStoreKey
@@ -655,14 +656,9 @@ void QpidPmdaQmf1::begin_fetch_values()
             }
 
             // Get a PCP instance ID by storing the new object in PCP's cache.
-            const int instanceId = pmdaCacheStoreKey(
-                *domain, PMDA_CACHE_ADD, instanceName.c_str(),
-                 0, NULL, new qpid::console::ObjectId(*objectId));
-            if (instanceId < 0) {
-                __pmNotifyErr(LOG_ERR, "pmdaCacheStore failed for %s: %s",
-                              ConsoleUtils::toString(*objectId).c_str(),
-                              pmErrStr(instanceId));
-            }
+            const int instanceId = pcp::cache::store(
+                *domain, instanceName.c_str(),
+                new qpid::console::ObjectId(*objectId));
 
             // Add this new instance to the selected instance domain.
             (*domain)(instanceId, instanceName);
@@ -699,20 +695,13 @@ pcp::pmda::fetch_value_result QpidPmdaQmf1::fetch_value(const metric_id &metric)
     }
 
     // Fetch the Qpid objectId from the PMDA cache (we added in begin_fetch_values).
-    char * instanceName = NULL;
-    void * opaque;
-    const int status = pmdaCacheLookup(*domain, metric.instance, &instanceName, &opaque);
-    if ((status != PMDA_CACHE_ACTIVE) && (status != PMDA_CACHE_INACTIVE)) {
-        __pmNotifyErr(LOG_NOTICE, "pmdaCacheLookup failed for cluster %ju: %s",
-                      (uintmax_t)metric.cluster, pmErrStr(status));
-        throw pcp::exception(PM_ERR_INST);
-    }
-    if (opaque == NULL) {
-        __pmNotifyErr(LOG_ERR, "pmdaCacheLookup returned NULL for cluster %ju",
+    const qpid::console::ObjectId * const objectId =
+        pcp::cache::lookup<const qpid::console::ObjectId *>(*domain, metric.instance).opaque;
+    if (objectId == NULL) {
+        __pmNotifyErr(LOG_ERR, "pcp::cache::lookup returned NULL for cluster %ju",
                       (uintmax_t)metric.cluster);
         throw pcp::exception(PM_ERR_INST);
     }
-    const qpid::console::ObjectId * const objectId = static_cast<qpid::console::ObjectId *>(opaque);
 
     // Fetch the object's propeties or statistics, according to the metric cluster.
     const boost::optional<qpid::console::Object> object = (metric.cluster % 2 == 0)
