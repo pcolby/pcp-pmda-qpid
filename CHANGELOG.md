@@ -2,9 +2,9 @@
 
 ### 0.2.4 (_unreleased_)
 Features:
-- use ''pmda::cache::*'' methods ([88da366](
-  ../../commit/88da366a5b82415a25bc7f639778f0b84a737614)
-- requires PMDA++ 0.4.0 or later.
+- use `pmda::cache::*` methods ([88da366](
+  ../../commit/88da366a5b82415a25bc7f639778f0b84a737614))
+  - requires PMDA++ 0.4.0 or later
 
 ### 0.2.3 (2014-05-10)
 Bug fixes:
