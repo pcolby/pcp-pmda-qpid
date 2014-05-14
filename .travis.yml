@@ -18,7 +18,7 @@ install:
   - wget --content-disposition --directory-prefix /tmp
     https://github.com/pcolby/pcp-pmda-cpp/archive/$PCP_PMDA_CPP_VERSION.tar.gz
   - tar xvzf /tmp/pcp-pmda-cpp-`echo $PCP_PMDA_CPP_VERSION | sed 's/^v//'`.tar.gz -C /tmp
-  - pushd /tmp/pcp-pmda-cpp`echo $PCP_PMDA_CPP_VERSION | sed 's/^v//'`/include
+  - pushd /tmp/pcp-pmda-cpp-`echo $PCP_PMDA_CPP_VERSION | sed 's/^v//'`/include
   - cmake . && sudo make install
   - popd
 
