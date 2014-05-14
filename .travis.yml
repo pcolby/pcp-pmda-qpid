@@ -14,10 +14,12 @@ install:
     libpcp3 libpcp3-dev libpcp-pmda3 libpcp-pmda3-dev
     libqmfconsole2-dev libqpidclient2-dev libqpidcommon2-dev libqpidtypes1-dev
     pcp
+  #- PCP_PMDA_CPP_VERSION=pcp-pmda-cpp-0.3.4
   - PCP_PMDA_CPP_VERSION=master
-  - wget -P /tmp https://github.com/pcolby/pcp-pmda-cpp/archive/pcp-pmda-cpp-$PCP_PMDA_CPP_VERSION.tar.gz
-  - tar xvzf /tmp/pcp-pmda-cpp-$PCP_PMDA_CPP_VERSION.tar.gz -C /tmp
-  - pushd /tmp/pcp-pmda-cpp-$PCP_PMDA_CPP_VERSION/include
+  - wget --content-disposition --directory-prefix /tmp
+    https://github.com/pcolby/pcp-pmda-cpp/archive/$PCP_PMDA_CPP_VERSION.tar.gz
+  - tar xvzf /tmp/$PCP_PMDA_CPP_VERSION.tar.gz -C /tmp
+  - pushd /tmp/$PCP_PMDA_CPP_VERSION/include
   - cmake . && sudo make install
   - popd
 
