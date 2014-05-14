@@ -657,8 +657,7 @@ void QpidPmdaQmf1::begin_fetch_values()
 
             // Get a PCP instance ID by storing the new object in PCP's cache.
             const int instanceId = pcp::cache::store(
-                *domain, instanceName.c_str(),
-                new qpid::console::ObjectId(*objectId));
+                *domain, instanceName, new qpid::console::ObjectId(*objectId));
 
             // Add this new instance to the selected instance domain.
             (*domain)(instanceId, instanceName);
