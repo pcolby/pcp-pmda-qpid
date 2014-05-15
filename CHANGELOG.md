@@ -1,6 +1,6 @@
 ## Qpid PMDA Changelog
 
-### 0.2.4 (_unreleased_)
+### 0.2.4 (2014-05-15)
 Features:
 - use `pmda::cache::*` methods ([88da366](
   ../../commit/88da366a5b82415a25bc7f639778f0b84a737614)) -

@@ -76,7 +76,7 @@ int QpidPmdaQmf1::get_default_pmda_domain_number() const
  */
 std::string QpidPmdaQmf1::get_pmda_version() const
 {
-    return "0.2.3";
+    return "0.2.4";
 }
 
 /**

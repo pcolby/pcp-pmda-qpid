@@ -6,7 +6,7 @@
 
 Summary: PCP PMDA for Qpid
 Name: pcp-pmda-qpid
-Version: 0.2.3
+Version: 0.2.4
 Release: 1%{?dist}
 License: Apache License
 Group: Development/Libraries
@@ -21,7 +21,7 @@ Requires: qpid-qmf
 BuildRequires: boost >= 1.32
 BuildRequires: cmake >= 2.6
 BuildRequires: pcp-libs-devel
-BuildRequires: pcp-pmda-cpp-devel >= 0.3.4
+BuildRequires: pcp-pmda-cpp-devel >= 0.4.0
 BuildRequires: qpid-cpp-client-devel
 BuildRequires: qpid-qmf-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -57,6 +57,9 @@ to Performance Co-Pilot (PCP) using the PMDA++ library.
 %{pcp_pmdas_dir}/qpid/root
 
 %changelog
+* Thu May 15 2014 Paul Colby <git@colby.id.au> - 0.2.4-1
+- updated to %{name} 0.2.4.
+
 * Sat May 10 2014 Paul Colby <git@colby.id.au> - 0.2.3-1
 - updated to %{name} 0.2.3.
 - added explicit files list.
