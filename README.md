@@ -26,8 +26,8 @@ Infrastructure | libpcp_pmda |        | pmdaqpid-qmf2 | QMF2 | Infrastructure
 ## Building & Installing
 1. Install the pre-requisites - Boost, Apache Qpid, [PMDA++](https://github.com/pcolby/pcp-pmda-cpp).
 2. `mkdir build && cd build`
-3. `cmake .. && make && sudo make install`
-4. ``cd `pmconfig PCP_PMDAS_DIR | cut -b15-` && ./Install``
+3. `cmake <path-to-code> && make && sudo make install`
+4. ``cd `pmconfig PCP_PMDAS_DIR | cut -b15-`/qpid && ./Install``
 
 Alternatively, use [rpmbuild](package/rpm).
 
