@@ -53,7 +53,7 @@ if (HAVE_QMF2)
 endif ()
 
 # Add Boost to the build.
-find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(Boost COMPONENTS program_options system REQUIRED)
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
 # Add PCP libraries to the build.
