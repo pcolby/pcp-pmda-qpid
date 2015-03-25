@@ -11,7 +11,7 @@ install:
   - >
     sudo apt-get install -qq
     cppcheck
-    libboost-program-options-dev
+    libboost-program-options-dev libboost-system-dev
     libpcp3 libpcp3-dev libpcp-pmda3 libpcp-pmda3-dev
     libqmfconsole2-dev libqpidclient2-dev libqpidcommon2-dev libqpidtypes1-dev
     pcp
