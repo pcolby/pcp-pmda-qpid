@@ -1,5 +1,10 @@
 ## Qpid PMDA Changelog
 
+### 0.2.5 (_unreleased_)
+Bug fixes:
+- `QpidPmdaQmf1::nonPmdaMode` not initialised in constructor
+  ([e8d6093](../../commit/e8d6093a0d662f89585adca4217f89ee3cf5eb41))
+
 ### 0.2.4 (2014-05-15)
 Features:
 - use `pmda::cache::*` methods ([88da366](
