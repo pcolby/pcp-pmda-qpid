@@ -33,7 +33,7 @@
 /**
  * @brief Default constructor.
  */
-QpidPmdaQmf1::QpidPmdaQmf1() : sessionManager(&consoleListener)
+QpidPmdaQmf1::QpidPmdaQmf1() : nonPmdaMode(false), sessionManager(&consoleListener)
 {
     // Setup our instance domain IDs.  Thses instance domains are empty to
     // begin with - we'll dynamically add to them as Qpid updates arrive.
