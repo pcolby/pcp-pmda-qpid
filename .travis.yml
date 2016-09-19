@@ -4,30 +4,34 @@ compiler:
   - clang
   - gcc
 
+env:
+  - PCP_PMDA_CPP_VERSION=v0.4.0
+  - PCP_PMDA_CPP_VERSION=v0.4.1
+  - PCP_PMDA_CPP_VERSION=v0.4.2
+  - PCP_PMDA_CPP_VERSION=v0.4.3
+  - PCP_PMDA_CPP_VERSION=master
+
+matrix:
+  allow_failures:
+    - env:PCP_PMDA_CPP_VERSION=master
+
 before_install:
   - sudo apt-get update -qq
 
 install:
   - >
-    sudo apt-get install -qq
-    cppcheck
-    libboost-program-options-dev libboost-system-dev
-    libpcp3 libpcp3-dev libpcp-pmda3 libpcp-pmda3-dev
-    libqmfconsole2-dev libqpidclient2-dev libqpidcommon2-dev libqpidtypes1-dev
-    pcp
-  - PCP_PMDA_CPP_VERSION=v0.4.0
-  - wget --content-disposition --directory-prefix /tmp
-    https://github.com/pcolby/pcp-pmda-cpp/archive/$PCP_PMDA_CPP_VERSION.tar.gz
-  - tar xvzf /tmp/pcp-pmda-cpp-`echo $PCP_PMDA_CPP_VERSION | sed 's/^v//'`.tar.gz -C /tmp
-  - pushd /tmp/pcp-pmda-cpp-`echo $PCP_PMDA_CPP_VERSION | sed 's/^v//'`/include
-  - cmake . && sudo make install
-  - popd
+    sudo apt-get install -qq cppcheck libboost-{program-options,system}-dev libpcp{,-pmda}3{,-dev}
+    libqmfconsole2-dev libqpidclient2-dev libqpidcommon2-dev libqpidtypes1-dev pcp
 
 before_script:
-  - mkdir -p build
+  - mkdir -p /tmp/pcp-pmda-cpp
+  - >
+    curl -Ls https://github.com/pcolby/pcp-pmda-cpp/archive/$PCP_PMDA_CPP_VERSION.tar.gz |
+    tar xvz -C /tmp/pcp-pmda-cpp --strip-components=2 --wildcards 'pcp-pmda-cpp-*/include'
+  - cmake -B/tmp/pcp-pmda-cpp-build -H/tmp/pcp-pmda-cpp
+  - sudo make -C /tmp/pcp-pmda-cpp-build install
 
 script:
-  - cppcheck --error-exitcode=1 --quiet .
-  - pushd build
-  - cmake .. && make && sudo make install
-  - popd
+  - cppcheck -DPM_ERR_FAULT=-12445 --enable=all --error-exitcode=1 --suppress={missingIncludeSystem,unusedFunction} -q .
+  - cmake -Bbuild -H.
+  - make -C build && sudo make -C build install
