@@ -4,7 +4,7 @@
 [![Apache License](http://img.shields.io/badge/license-APACHE2-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
-Qpid PMDA is a free, open source, [PCP](http://oss.sgi.com/projects/pcp/
+Qpid PMDA is free and open source, [PCP](http://oss.sgi.com/projects/pcp/
 "Performance Co-Pilot") Performance Metrics Domain Agent for [Apache Qpid](
 http://qpid.apache.org/). It exposes performance metrics from Qpid message
 brokers via [QMF](http://qpid.apache.org/components/qmf/index.html "Qpid
